@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VLA 진화 로드맵 타임라인 (2022–2026)</title>
+  <title>VLA 진화 로드맵 (상세보기 팝업 지원)</title>
   <style>
     :root {
       --bg: #0d0f14;
@@ -17,7 +17,6 @@
       --accent-2025a: #4ea8de;
       --accent-2025b: #a07de8;
       --accent-2026: #c0c8d8;
-      --line: #2a2f3f;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -27,13 +26,15 @@
       color: var(--text-primary);
       font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
       min-height: 100vh;
-      padding: 48px 24px 80px;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
     }
 
     /* ── Header ── */
     header {
       text-align: center;
-      margin-bottom: 64px;
+      padding: 48px 24px 24px;
     }
     header .label {
       display: inline-block;
@@ -45,637 +46,400 @@
       margin-bottom: 12px;
     }
     header h1 {
-      font-size: clamp(24px, 4vw, 42px);
+      font-size: clamp(24px, 4vw, 36px);
       font-weight: 800;
       letter-spacing: -0.5px;
       line-height: 1.2;
       background: linear-gradient(135deg, #e8ecf4 30%, #8a93aa);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    header p {
-      margin-top: 14px;
-      font-size: 14px;
-      color: var(--text-secondary);
-      max-width: 560px;
-      margin-left: auto;
-      margin-right: auto;
-      line-height: 1.7;
     }
 
-    /* ── Legend ── */
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px 20px;
-      margin-bottom: 56px;
+    /* ── Horizontal Scroll Area ── */
+    .scroll-container {
+      width: 100%;
+      overflow-x: auto;
+      padding: 20px 40px 60px;
+      scroll-behavior: smooth;
     }
-    .legend-item {
+    .scroll-container::-webkit-scrollbar { height: 8px; }
+    .scroll-container::-webkit-scrollbar-track { background: color-mix(in srgb, var(--surface) 50%, transparent); border-radius: 10px; }
+    .scroll-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    .scroll-container::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
+
+    .timeline-track {
       display: flex;
       align-items: center;
-      gap: 7px;
-      font-size: 12px;
-      color: var(--text-secondary);
-    }
-    .legend-dot {
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    /* ── Timeline wrapper ── */
-    .timeline {
+      height: 460px;
       position: relative;
-      max-width: 900px;
-      margin: 0 auto;
+      width: max-content;
+      gap: 20px;
+      padding-right: 60px;
     }
 
-    /* vertical spine */
-    .timeline::before {
+    .timeline-track::before {
       content: '';
       position: absolute;
-      left: 50%;
-      top: 0; bottom: 0;
-      width: 2px;
-      background: linear-gradient(to bottom, transparent, var(--border) 5%, var(--border) 95%, transparent);
-      transform: translateX(-50%);
+      left: 0; right: 0; top: 50%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--border) 2%, var(--border) 98%, transparent);
+      transform: translateY(-50%);
+      z-index: 0;
     }
 
-    /* ── Era block ── */
-    .era {
-      position: relative;
-      margin-bottom: 0;
-    }
-
-    .era-header {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin-bottom: 32px;
-      z-index: 2;
-    }
-
+    /* ── Era Divider ── */
+    .era-divider { position: relative; z-index: 2; padding: 0 16px; }
     .era-badge {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 22px;
-      border-radius: 999px;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 10px 24px; border-radius: 12px;
       border: 1.5px solid var(--era-color);
-      background: color-mix(in srgb, var(--era-color) 12%, var(--surface));
-      font-size: 13px;
-      font-weight: 700;
+      background: color-mix(in srgb, var(--bg) 95%, var(--era-color));
       color: var(--era-color);
-      letter-spacing: 0.3px;
-      box-shadow: 0 0 20px color-mix(in srgb, var(--era-color) 20%, transparent);
+      box-shadow: 0 0 20px color-mix(in srgb, var(--era-color) 15%, transparent);
     }
-    .era-badge .year {
-      font-size: 18px;
-      font-weight: 900;
+    .era-badge .year { font-size: 18px; font-weight: 900; letter-spacing: 0.5px; }
+    .era-badge .desc { font-size: 11px; font-weight: 600; margin-top: 4px; }
+
+    /* ── Event Items ── */
+    .event-item { position: relative; height: 100%; width: 300px; flex-shrink: 0; }
+    .event-item .spine-dot {
+      width: 16px; height: 16px; border-radius: 50%;
+      background: var(--era-color); border: 4px solid var(--bg);
+      box-shadow: 0 0 12px color-mix(in srgb, var(--era-color) 60%, transparent);
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3;
     }
-
-    /* ── Event rows ── */
-    .events {
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-      margin-bottom: 56px;
+    .event-item::after {
+      content: ''; position: absolute; left: 50%; width: 2px;
+      background: var(--border); transform: translateX(-50%); z-index: 1;
     }
+    .event-item.top::after { bottom: 50%; height: 24px; }
+    .event-item.bottom::after { top: 50%; height: 24px; }
 
-    .event-row {
-      display: grid;
-      grid-template-columns: 1fr 40px 1fr;
-      align-items: start;
-      gap: 0;
-    }
-
-    /* alternating: odd rows → card on left, even → card on right */
-    .event-row.left  .card { grid-column: 1; grid-row: 1; justify-self: end; }
-    .event-row.left  .spine-dot { grid-column: 2; grid-row: 1; }
-    .event-row.left  .spacer { grid-column: 3; grid-row: 1; }
-
-    .event-row.right .spacer { grid-column: 1; grid-row: 1; }
-    .event-row.right .spine-dot { grid-column: 2; grid-row: 1; }
-    .event-row.right .card { grid-column: 3; grid-row: 1; justify-self: start; }
-
-    /* dot on spine */
-    .spine-dot {
-      display: flex;
-      justify-content: center;
-      padding-top: 18px;
-    }
-    .spine-dot::after {
-      content: '';
-      width: 14px; height: 14px;
-      border-radius: 50%;
-      background: var(--era-color);
-      border: 3px solid var(--bg);
-      box-shadow: 0 0 10px color-mix(in srgb, var(--era-color) 60%, transparent);
-      flex-shrink: 0;
-    }
-
-    /* connector line from dot to card */
-    .event-row.left  .spine-dot { position: relative; }
-    .event-row.right .spine-dot { position: relative; }
-
-    /* ── Card ── */
+    /* ── Card Styles ── */
     .card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 18px 20px;
-      max-width: 380px;
-      width: 100%;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-      cursor: default;
-      position: relative;
+      position: absolute; width: 100%;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+      transition: all 0.2s ease; z-index: 2;
+      cursor: pointer; /* 클릭 가능한 커서 */
     }
+    .event-item.top .card { bottom: 50%; margin-bottom: 24px; }
+    .event-item.bottom .card { top: 50%; margin-top: 24px; }
+
+    /* Hover Effect */
     .card:hover {
-      transform: translateY(-3px);
       border-color: var(--era-color);
       box-shadow: 0 8px 32px color-mix(in srgb, var(--era-color) 18%, transparent);
+      transform: translateY(-5px) scale(1.02);
     }
+    .event-item.bottom .card:hover { transform: translateY(5px) scale(1.02); }
 
-    .card-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 8px;
+    /* Click Hint (숨겨져 있다가 hover 시 나타남) */
+    .click-hint {
+      display: block; font-size: 10px; color: var(--era-color);
+      margin-top: 12px; font-weight: 700; opacity: 0;
+      transition: opacity 0.2s; text-align: right;
     }
+    .card:hover .click-hint { opacity: 1; }
 
-    .card-title {
-      font-size: 16px;
-      font-weight: 800;
-      color: var(--era-color);
-      letter-spacing: -0.2px;
-    }
-
+    .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .card-title { font-size: 16px; font-weight: 800; color: var(--era-color); }
     .card-date {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--text-secondary);
+      font-size: 11px; font-weight: 600; color: var(--text-secondary);
       background: color-mix(in srgb, var(--era-color) 10%, var(--bg));
       border: 1px solid color-mix(in srgb, var(--era-color) 25%, transparent);
-      border-radius: 999px;
-      padding: 2px 9px;
-      white-space: nowrap;
+      border-radius: 999px; padding: 3px 10px;
     }
-
-    .card-desc {
-      font-size: 13px;
-      color: var(--text-secondary);
-      line-height: 1.65;
-    }
-
-    .card-tags {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 12px;
-    }
-
+    .card-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
     .tag {
-      font-size: 10.5px;
-      font-weight: 600;
-      padding: 2px 8px;
-      border-radius: 4px;
-      background: color-mix(in srgb, var(--era-color) 14%, transparent);
+      font-size: 10.5px; font-weight: 600; padding: 3px 8px; border-radius: 4px;
+      background: color-mix(in srgb, var(--era-color) 12%, transparent);
       color: color-mix(in srgb, var(--era-color) 90%, #fff);
-      border: 1px solid color-mix(in srgb, var(--era-color) 30%, transparent);
+      border: 1px solid color-mix(in srgb, var(--era-color) 20%, transparent);
     }
 
-    /* ── Responsive ── */
-    @media (max-width: 640px) {
-      .timeline::before { left: 20px; }
+    /* 팝업에 들어갈 상세 내용은 기본적으로 숨김 */
+    .hidden-detail { display: none; }
 
-      .event-row {
-        grid-template-columns: 40px 1fr;
-      }
-      .event-row.left .card,
-      .event-row.right .card {
-        grid-column: 2; grid-row: 1;
-        justify-self: start;
-        max-width: 100%;
-      }
-      .event-row.left .spine-dot,
-      .event-row.right .spine-dot {
-        grid-column: 1; grid-row: 1;
-      }
-      .event-row.left .spacer,
-      .event-row.right .spacer { display: none; }
-    }
+    /* 모바일 안내 문구 */
+    .scroll-hint { text-align: center; font-size: 12px; color: var(--text-secondary); margin-bottom: 20px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
-    /* footer */
-    footer {
-      text-align: center;
-      margin-top: 48px;
-      font-size: 12px;
-      color: #4a5060;
+    /* ── Modal (Popup) Styles ── */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(13, 15, 20, 0.85);
+      backdrop-filter: blur(5px);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; opacity: 0; visibility: hidden;
+      transition: all 0.3s ease;
+      padding: 20px;
     }
+    .modal-overlay.active { opacity: 1; visibility: visible; }
+    
+    .modal-content {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 30px; width: 100%; max-width: 500px;
+      transform: translateY(20px) scale(0.95); transition: all 0.3s ease;
+      position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .modal-overlay.active .modal-content { transform: translateY(0) scale(1); border-color: var(--modal-color, var(--border)); }
+    
+    .close-btn {
+      position: absolute; top: 20px; right: 20px;
+      background: transparent; border: none; color: var(--text-secondary);
+      font-size: 24px; cursor: pointer; transition: color 0.2s;
+    }
+    .close-btn:hover { color: #fff; }
+
+    .modal-header { margin-bottom: 20px; padding-right: 30px; }
+    .modal-title { font-size: 22px; font-weight: 800; color: var(--modal-color, #fff); margin-bottom: 8px; }
+    .modal-date { display: inline-block; font-size: 12px; color: var(--text-secondary); padding: 4px 12px; border-radius: 999px; background: rgba(255,255,255,0.05); }
+    
+    .modal-body { font-size: 14px; line-height: 1.7; color: var(--text-primary); margin-bottom: 20px; }
+    .modal-body strong { color: var(--modal-color, #fff); }
+    
+    .modal-tags { display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--border); padding-top: 20px; }
   </style>
 </head>
 <body>
 
-<header>
-  <div class="label">Research Timeline</div>
-  <h1>VLA 진화 로드맵</h1>
-  <p>Vision-Language-Action 모델의 탄생부터 메모리·폼팩터 확장까지,<br>2022년부터 2026년 4월까지의 핵심 이정표를 정리한 검증·보정판입니다.</p>
-</header>
+  <header>
+    <div class="label">Interactive Timeline</div>
+    <h1>VLA 진화 로드맵 (2022~2026)</h1>
+  </header>
 
-<div class="legend">
-  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-2022)"></div>2022 — 범용 로봇 정책의 시작</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-2023)"></div>2023 — 행동 생성 혁신 + VLA 탄생</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-2024)"></div>2024 — 오픈소스 + 실전형 VLA</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-2025a)"></div>2025 상반기 — 효율화와 오픈월드 일반화</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-2025b)"></div>2025 하반기 — 배포 후 학습과 휴먼 데이터 흡수</div>
-  <div class="legend-item"><div class="legend-dot" style="background:var(--accent-2026)"></div>2026 상반기 — 메모리와 폼팩터 확장</div>
-</div>
+  <div class="scroll-hint">➔ 카드를 클릭하면 상세 기술 정보를 볼 수 있습니다 ➔</div>
 
-<div class="timeline">
+  <div class="scroll-container">
+    <div class="timeline-track">
 
-  <!-- ════════════════════════════════════════
-       2022
-  ════════════════════════════════════════ -->
-  <div class="era" style="--era-color: var(--accent-2022)">
-    <div class="era-header">
-      <div class="era-badge">
-        <span class="year">2022</span>
-        <span>범용 로봇 정책의 시작</span>
+      <div class="era-divider" style="--era-color: var(--accent-2022)">
+        <div class="era-badge"><span class="year">2022</span><span class="desc">범용 정책의 시작</span></div>
       </div>
-    </div>
-    <div class="events">
 
-      <div class="event-row left">
-        <div class="card">
+      <div class="event-item top" style="--era-color: var(--accent-2022)">
+        <div class="spine-dot"></div>
+        <div class="card" data-color="var(--accent-2022)">
           <div class="card-top">
             <span class="card-title">RT-1</span>
             <span class="card-date">2022.12</span>
           </div>
-          <p class="card-desc">트랜스포머 기반 멀티태스크 로봇 제어의 가능성을 실세계에서 증명. 이후 VLA 계열 연구의 출발점이 된 모델.</p>
-          <div class="card-tags">
-            <span class="tag">Google Research</span>
-            <span class="tag">Transformer</span>
-            <span class="tag">Multi-task</span>
+          <p class="card-desc">트랜스포머 기반 멀티태스크 로봇 제어의 가능성을 증명한 VLA의 시초.</p>
+          <div class="hidden-detail">
+            <strong>핵심 성과:</strong> 13대의 로봇으로 13만 개의 궤적을 학습했습니다.<br><br>기존 로봇 제어 모델들이 한 가지 임무에만 특화되어 있던 것과 달리, "대규모 데이터와 트랜스포머 아키텍처를 결합하면 로봇에게도 범용적인 정책(Generalist Policy)을 만들 수 있다"는 가능성을 실세계에서 처음으로 증명한 기념비적인 연구입니다.
           </div>
+          <div class="card-tags">
+            <span class="tag">Google Research</span><span class="tag">Transformer</span>
+          </div>
+          <span class="click-hint">➕ 상세 정보 보기</span>
         </div>
-        <div class="spine-dot"></div>
-        <div class="spacer"></div>
       </div>
+
+      <div class="era-divider" style="--era-color: var(--accent-2023)">
+        <div class="era-badge"><span class="year">2023</span><span class="desc">행동 생성 & VLM</span></div>
+      </div>
+
+      <div class="event-item bottom" style="--era-color: var(--accent-2023)">
+        <div class="spine-dot"></div>
+        <div class="card" data-color="var(--accent-2023)">
+          <div class="card-top"><span class="card-title">ACT</span><span class="card-date">2023.04</span></div>
+          <p class="card-desc">행동을 chunk 단위로 예측해 정밀 조작 성능을 끌어올림.</p>
+          <div class="hidden-detail">
+            <strong>Action Chunking 도입:</strong> 로봇이 한 번에 하나의 동작만 예측하면 오류가 누적되어 덜덜 떨리는 현상(Compounding error)이 발생합니다. <br><br>ACT는 일정 단위의 행동을 '덩어리(Chunk)'로 묶어 한 번에 예측하고 부드럽게 겹쳐서 실행(Temporal Ensembling)하는 방식을 도입했습니다. 이를 통해 양팔 로봇의 매우 정밀하고 매끄러운 연속 동작이 가능해졌습니다.
+          </div>
+          <div class="card-tags"><span class="tag">Chunk Prediction</span><span class="tag">Imitation Learning</span></div>
+          <span class="click-hint">➕ 상세 정보 보기</span>
+        </div>
+      </div>
+
+      <div class="event-item top" style="--era-color: var(--accent-2023)">
+        <div class="spine-dot"></div>
+        <div class="card" data-color="var(--accent-2023)">
+          <div class="card-top"><span class="card-title">Diffusion Policy</span><span class="card-date">2023.05</span></div>
+          <p class="card-desc">확산(Diffusion) 모델을 로봇 제어에 도입하여 다채로운 행동을 생성.</p>
+          <div class="hidden-detail">
+            <strong>생성형 AI의 로봇 적용:</strong> 이미지 생성 AI(Midjourney 등)에서 쓰이는 노이즈 제거(Denoising) 과정을 로봇의 궤적 생성에 적용했습니다.<br><br>단순히 정해진 하나의 동작만 하는 것이 아니라, 같은 목표라도 여러 가지 방법으로 부드럽게 접근할 수 있는 '행동의 다양성'을 크게 개선하여 이후 거의 모든 고성능 VLA의 표준 행동 생성 알고리즘이 되었습니다.
+          </div>
+          <div class="card-tags"><span class="tag">Diffusion Model</span><span class="tag">Generative Policy</span></div>
+          <span class="click-hint">➕ 상세 정보 보기</span>
+        </div>
+      </div>
+
+      <div class="event-item bottom" style="--era-color: var(--accent-2023)">
+        <div class="spine-dot"></div>
+        <div class="card" data-color="var(--accent-2023)">
+          <div class="card-top"><span class="card-title">RT-2</span><span class="card-date">2023.07</span></div>
+          <p class="card-desc">웹 스케일 VLM 지식을 로봇 제어에 연결하여 폭발적인 일반화 달성.</p>
+          <div class="hidden-detail">
+            <strong>로봇 데이터의 한계 돌파:</strong> "로봇 데이터만으로는 한계가 있으니 세상의 지식을 끌어오자"는 전략의 첫 구현체입니다.<br><br>인터넷의 방대한 사진과 텍스트로 사전 학습된 시각-언어 모델(VLM)을 로봇 두뇌의 뼈대로 사용했습니다. 그 결과, 로봇이 한 번도 본 적 없는 물건(예: 다스베이더 피규어)을 언어로 이해하고 조작할 수 있는 엄청난 범용성(Semantic Generalization)을 보여주었습니다.
+          </div>
+          <div class="card-tags"><span class="tag">Google DeepMind</span><span class="tag">VLM Transfer</span></div>
+          <span class="click-hint">➕ 상세 정보 보기</span>
+        </div>
+      </div>
+
+      <div class="era-divider" style="--era-color: var(--accent-2024)">
+        <div class="era-badge"><span class="year">2024</span><span class="desc">오픈소스와 실전형</span></div>
+      </div>
+
+      <div class="event-item top" style="--era-color: var(--accent-2024)">
+        <div class="spine-dot"></div>
+        <div class="card" data-color="var(--accent-2024)">
+          <div class="card-top"><span class="card-title">Octo</span><span class="card-date">2024.05</span></div>
+          <p class="card-desc">최초급 오픈소스 범용 VLA. 연구 커뮤니티의 기준 모델로 자리매김.</p>
+          <div class="hidden-detail">
+            <strong>연구의 민주화:</strong> 이전까지의 강력한 로봇 AI는 구글 같은 빅테크 기업의 전유물이었습니다.<br><br>Octo는 대규모 오픈 데이터셋(Open X-Embodiment)으로 사전 학습된 트랜스포머 기반 모델로, 누구나 모델 가중치를 다운로드받아 자신의 연구실 로봇에 맞게 파인튜닝할 수 있게 만들어 로봇 AI 연구의 폭발적 성장을 견인했습니다.
+          </div>
+          <div class="card-tags"><span class="tag">Open Source</span><span class="tag">UC Berkeley</span></div>
+          <span class="click-hint">➕ 상세 정보 보기</span>
+        </div>
+      </div>
+
+      <div class="event-item bottom" style="--era-color: var(--accent-2024)">
+        <div class="spine-dot"></div>
+        <div class="card" data-color="var(--accent-2024)">
+          <div class="card-top"><span class="card-title">OpenVLA</span><span class="card-date">2024.07</span></div>
+          <p class="card-desc">최초의 VLM 기반 오픈소스. RT-2 성능을 능가하고 경량 튜닝 지원.</p>
+          <div class="hidden-detail">
+            <strong>7B 파라미터의 기적:</strong> Llama 2 기반의 시각-언어 모델(Prismatic VLM)을 백본으로 사용한 오픈소스 모델입니다.<br><br>구글의 거대한 RT-2보다 크기는 작지만, 여러 조작 태스크 평가에서 이를 뛰어넘는 효율을 보여주었습니다. 특히 적은 컴퓨팅 자원으로도 학습이 가능한 LoRA(저랭크 적응) 파인튜닝을 공식 지원해 기업과 대학에서 널리 쓰이고 있습니다.
+          </div>
+          <div class="card-tags"><span class="tag">Stanford / Berkeley</span><span class="tag">LoRA Supported</span></div>
+          <span class="click-hint">➕ 상세 정보 보기</span>
+        </div>
+      </div>
+
+      <div class="event-item top" style="--era-color: var(--accent-2024)">
+        <div class="spine-dot"></div>
+        <div class="card" data-color="var(--accent-2024)">
+          <div class="card-top"><span class="card-title">π0 (pi-zero)</span><span class="card-date">2024.10</span></div>
+          <p class="card-desc">Flow matching 도입으로 50Hz 고주파 제어 및 실제 배포 수준 도달.</p>
+          <div class="hidden-detail">
+            <strong>로봇계의 ChatGPT 모멘트:</strong> Physical Intelligence사에서 발표한 이 모델은 확산(Diffusion)보다 수렴 속도가 빠르고 안정적인 Flow-matching을 Action Head에 도입했습니다.<br><br>초당 50번의 미세한 움직임을 제어하여 세탁물 접기, 계란 깨기 등 이전에는 불가능했던 극도로 복잡하고 섬세한 조작을 단 하나의 범용 모델로 처리해 냈습니다.
+          </div>
+          <div class="card-tags"><span class="tag">Physical Intelligence</span><span class="tag">Flow-matching</span></div>
+          <span class="click-hint">➕ 상세 정보 보기</span>
+        </div>
+      </div>
+
+      <div class="era-divider" style="--era-color: var(--accent-2025a)">
+        <div class="era-badge"><span class="year">2025 H1</span><span class="desc">초고속 & 오픈월드</span></div>
+      </div>
+
+      <div class="event-item bottom" style="--era-color: var(--accent-2025a)">
+        <div class="spine-dot"></div>
+        <div class="card" data-color="var(--accent-2025a)">
+          <div class="card-top"><span class="card-title">π0-FAST</span><span class="card-date">2025.01</span></div>
+          <p class="card-desc">주파수 영역 토크나이징을 통해 추론 속도를 15배 향상.</p>
+          <div class="hidden-detail">
+            <strong>토크나이징의 혁신:</strong> VLA 모델의 가장 큰 단점은 덩치가 커서 뇌(추론)가 느리게 작동한다는 점이었습니다.<br><br>FAST는 연속적인 로봇 행동 데이터를 주파수(Frequency) 영역으로 변환한 뒤 압축하는 방식을 사용하여 기존 모델과 동일한 성능을 내면서도 추론 속도를 무려 15배나 높여 실시간 고속 제어의 장벽을 허물었습니다.
+          </div>
+          <div class="card-tags"><span class="tag">Frequency Tokenizing</span><span class="tag">15x Speed</span></div>
+          <span class="click-hint">➕ 상세 정보 보기</span>
+        </div>
+      </div>
+
+      <div class="event-item top" style="--era-color: var(--accent-2025a)">
+        <div class="spine-dot"></div>
+        <div class="card" data-color="var(--accent-2025a)">
+          <div class="card-top"><span class="card-title">GR00T N1</span><span class="card-date">2025.03</span></div>
+          <p class="card-desc">휴머노이드 전신 제어에 특화된 듀얼 시스템 기반 파운데이션 모델.</p>
+          <div class="hidden-detail">
+            <strong>인간과 같은 두뇌 구조:</strong> 휴머노이드는 두 팔뿐만 아니라 전신 균형을 잡아야 하므로 제어가 훨씬 어렵습니다.<br><br>엔비디아의 GR00T는 뇌를 두 가지로 나누었습니다. 느리지만 전체 상황을 계획하는 System 2와, 넘어지지 않게 순간적으로 반사 신경을 발휘하는 System 1을 계층적으로 분리하여 대형 휴머노이드 제어의 해답을 제시했습니다.
+          </div>
+          <div class="card-tags"><span class="tag">NVIDIA</span><span class="tag">Dual System</span></div>
+          <span class="click-hint">➕ 상세 정보 보기</span>
+        </div>
+      </div>
+
+      <div class="event-item bottom" style="--era-color: var(--accent-2025a)">
+        <div class="spine-dot"></div>
+        <div class="card" data-color="var(--accent-2025a)">
+          <div class="card-top"><span class="card-title">π0.5 (pi-0.5)</span><span class="card-date">2025.04</span></div>
+          <p class="card-desc">처음 보는 집이나 환경에서도 즉각적으로 임무를 수행하는 오픈월드 일반화.</p>
+          <div class="hidden-detail">
+            <strong>공간을 초월한 일반화:</strong> 기존 로봇들은 통제된 실험실 환경에서는 잘 작동하지만 환경이 바뀌면 바보가 되곤 했습니다.<br><br>π0.5는 방대한 공간 데이터 학습을 통해 '오픈월드 일반화(Open-world Generalization)'를 달성했습니다. 처음 가보는 가정집 주방에서도 사람이 말하는 대로 물건을 찾고 조리 도구를 다룰 수 있는 수준으로 진화했습니다.
+          </div>
+          <div class="card-tags"><span class="tag">Physical Intelligence</span><span class="tag">Open-world</span></div>
+          <span class="click-hint">➕ 상세 정보 보기</span>
+        </div>
+      </div>
+
+      <div style="min-width: 40px; height: 1px;"></div>
 
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════
-       2023
-  ════════════════════════════════════════ -->
-  <div class="era" style="--era-color: var(--accent-2023)">
-    <div class="era-header">
-      <div class="era-badge">
-        <span class="year">2023</span>
-        <span>행동 생성 혁신 + VLA 탄생</span>
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-content" id="modalContent">
+      <button class="close-btn" id="closeBtn">&times;</button>
+      <div class="modal-header">
+        <div class="modal-title" id="modalTitle">Model Name</div>
+        <div class="modal-date" id="modalDate">Date</div>
       </div>
-    </div>
-    <div class="events">
-
-      <div class="event-row left">
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">ACT</span>
-            <span class="card-date">2023.04</span>
-          </div>
-          <p class="card-desc">행동을 chunk 단위로 예측해 정밀 조작 성능을 크게 끌어올린 imitation policy. 연속적 행동 예측의 새로운 기준을 제시.</p>
-          <div class="card-tags">
-            <span class="tag">Chunk Prediction</span>
-            <span class="tag">Imitation Learning</span>
-          </div>
+      <div class="modal-body" id="modalBody">
+        Detailed description goes here...
+      </div>
+      <div class="modal-tags" id="modalTags">
         </div>
-        <div class="spine-dot"></div>
-        <div class="spacer"></div>
-      </div>
-
-      <div class="event-row right">
-        <div class="spacer"></div>
-        <div class="spine-dot"></div>
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">Diffusion Policy</span>
-            <span class="card-date">2023</span>
-          </div>
-          <p class="card-desc">멀티모달하고 부드러운 행동 생성을 가능하게 한 생성형 정책. 확산 모델을 로봇 제어에 도입한 선구적 연구.</p>
-          <div class="card-tags">
-            <span class="tag">Diffusion Model</span>
-            <span class="tag">Generative Policy</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="event-row left">
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">RT-2</span>
-            <span class="card-date">2023.07</span>
-          </div>
-          <p class="card-desc">웹 스케일 VLM 지식을 로봇 제어에 이전하며 semantic generalization을 폭발적으로 확장한 대표적 VLA. arXiv:2304.13705</p>
-          <div class="card-tags">
-            <span class="tag">Google DeepMind</span>
-            <span class="tag">VLM Transfer</span>
-            <span class="tag">Semantic Gen.</span>
-          </div>
-        </div>
-        <div class="spine-dot"></div>
-        <div class="spacer"></div>
-      </div>
-
     </div>
   </div>
 
-  <!-- ════════════════════════════════════════
-       2024
-  ════════════════════════════════════════ -->
-  <div class="era" style="--era-color: var(--accent-2024)">
-    <div class="era-header">
-      <div class="era-badge">
-        <span class="year">2024</span>
-        <span>오픈소스 민주화 + 실전형 VLA</span>
-      </div>
-    </div>
-    <div class="events">
+  <script>
+    const cards = document.querySelectorAll('.card');
+    const overlay = document.getElementById('modalOverlay');
+    const closeBtn = document.getElementById('closeBtn');
+    
+    // Modal elements
+    const mTitle = document.getElementById('modalTitle');
+    const mDate = document.getElementById('modalDate');
+    const mBody = document.getElementById('modalBody');
+    const mTags = document.getElementById('modalTags');
+    const mContent = document.getElementById('modalContent');
 
-      <div class="event-row left">
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">Octo</span>
-            <span class="card-date">2024.05</span>
-          </div>
-          <p class="card-desc">최초급 오픈소스 generalist robot policy. 커뮤니티 표준 기반을 마련하며 연구 접근성을 획기적으로 높임.</p>
-          <div class="card-tags">
-            <span class="tag">Open Source</span>
-            <span class="tag">Generalist Policy</span>
-          </div>
-        </div>
-        <div class="spine-dot"></div>
-        <div class="spacer"></div>
-      </div>
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        // Extract data from clicked card
+        const title = card.querySelector('.card-title').innerText;
+        const date = card.querySelector('.card-date').innerText;
+        const detailHtml = card.querySelector('.hidden-detail').innerHTML;
+        const themeColor = card.getAttribute('data-color');
+        
+        // Extract tags
+        const tags = card.querySelectorAll('.tag');
+        mTags.innerHTML = '';
+        tags.forEach(tag => {
+          const span = document.createElement('span');
+          span.className = 'tag';
+          span.innerText = tag.innerText;
+          span.style.background = `color-mix(in srgb, ${themeColor} 20%, transparent)`;
+          span.style.color = `color-mix(in srgb, ${themeColor} 90%, #fff)`;
+          span.style.border = `1px solid color-mix(in srgb, ${themeColor} 40%, transparent)`;
+          mTags.appendChild(span);
+        });
 
-      <div class="event-row right">
-        <div class="spacer"></div>
-        <div class="spine-dot"></div>
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">OpenVLA</span>
-            <span class="card-date">2024.06–07</span>
-          </div>
-          <p class="card-desc">본격적인 오픈소스 VLA. 일부 평가에서 RT-2-X를 포함한 기존 모델을 능가하며 오픈소스 VLA의 가능성을 입증.</p>
-          <div class="card-tags">
-            <span class="tag">Open Source VLA</span>
-            <span class="tag">Outperforms RT-2-X</span>
-          </div>
-        </div>
-      </div>
+        // Set Modal Data
+        mTitle.innerText = title;
+        mDate.innerText = date;
+        mBody.innerHTML = detailHtml;
+        
+        // Apply dynamic color theme to modal
+        mContent.style.setProperty('--modal-color', themeColor);
 
-      <div class="event-row left">
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">π0 (pi-zero)</span>
-            <span class="card-date">2024.10</span>
-          </div>
-          <p class="card-desc">flow matching 기반 VLA로 고주파 실세계 제어와 다양한 로봇·태스크 적응성을 강조. arXiv:2405.12213</p>
-          <div class="card-tags">
-            <span class="tag">Physical Intelligence</span>
-            <span class="tag">Flow Matching</span>
-            <span class="tag">High-freq Control</span>
-          </div>
-        </div>
-        <div class="spine-dot"></div>
-        <div class="spacer"></div>
-      </div>
+        // Show Modal
+        overlay.classList.add('active');
+      });
+    });
 
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════
-       2025 상반기
-  ════════════════════════════════════════ -->
-  <div class="era" style="--era-color: var(--accent-2025a)">
-    <div class="era-header">
-      <div class="era-badge">
-        <span class="year">2025 H1</span>
-        <span>효율화와 오픈월드 일반화</span>
-      </div>
-    </div>
-    <div class="events">
-
-      <div class="event-row left">
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">FAST / π0-FAST</span>
-            <span class="card-date">2025.01</span>
-          </div>
-          <p class="card-desc">주파수 기반 액션 토크나이징으로 학습 속도를 약 5배 개선. 효율적인 VLA 학습의 새로운 패러다임을 제시.</p>
-          <div class="card-tags">
-            <span class="tag">Physical Intelligence</span>
-            <span class="tag">Freq. Tokenizing</span>
-            <span class="tag">5× Speed</span>
-          </div>
-        </div>
-        <div class="spine-dot"></div>
-        <div class="spacer"></div>
-      </div>
-
-      <div class="event-row right">
-        <div class="spacer"></div>
-        <div class="spine-dot"></div>
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">GR00T N1</span>
-            <span class="card-date">2025.03</span>
-          </div>
-          <p class="card-desc">dual-system 구조를 내세운 휴머노이드용 오픈 파운데이션 모델. 빠른 반사와 느린 추론을 통합.</p>
-          <div class="card-tags">
-            <span class="tag">NVIDIA Research</span>
-            <span class="tag">Humanoid</span>
-            <span class="tag">Dual-system</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="event-row left">
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">NORA</span>
-            <span class="card-date">2025.04</span>
-          </div>
-          <p class="card-desc">FAST+ tokenizer를 사용하는 3B급 소형 오픈 VLA. 경량화와 성능의 균형을 추구하는 효율적 설계.</p>
-          <div class="card-tags">
-            <span class="tag">Open VLA</span>
-            <span class="tag">3B Model</span>
-            <span class="tag">FAST+ Tokenizer</span>
-          </div>
-        </div>
-        <div class="spine-dot"></div>
-        <div class="spacer"></div>
-      </div>
-
-      <div class="event-row right">
-        <div class="spacer"></div>
-        <div class="spine-dot"></div>
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">π0.5</span>
-            <span class="card-date">2025</span>
-          </div>
-          <p class="card-desc">완전히 처음 보는 집·방에서도 장기 household task를 수행하는 open-world generalization을 강조. arXiv:2504.19854</p>
-          <div class="card-tags">
-            <span class="tag">Physical Intelligence</span>
-            <span class="tag">Open-world Gen.</span>
-            <span class="tag">Household Task</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════
-       2025 하반기
-  ════════════════════════════════════════ -->
-  <div class="era" style="--era-color: var(--accent-2025b)">
-    <div class="era-header">
-      <div class="era-badge">
-        <span class="year">2025 H2</span>
-        <span>배포 후 학습과 인간 데이터 흡수</span>
-      </div>
-    </div>
-    <div class="events">
-
-      <div class="event-row left">
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">π*0.6</span>
-            <span class="card-date">2025.11</span>
-          </div>
-          <p class="card-desc">Recap 기반 RL post-training으로 실제 태스크 throughput을 2배 이상 높이는 방향을 제시. 배포 후 지속 개선의 가능성을 열다.</p>
-          <div class="card-tags">
-            <span class="tag">Physical Intelligence</span>
-            <span class="tag">RL Post-training</span>
-            <span class="tag">2× Throughput</span>
-          </div>
-        </div>
-        <div class="spine-dot"></div>
-        <div class="spacer"></div>
-      </div>
-
-      <div class="event-row right">
-        <div class="spacer"></div>
-        <div class="spine-dot"></div>
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">Human-to-Robot Transfer</span>
-            <span class="card-date">2025.12</span>
-          </div>
-          <p class="card-desc">사람의 egocentric 영상만 추가해도 일부 일반화 태스크에서 약 2배 개선이 나타남. 인간 데이터 활용의 새 가능성 제시.</p>
-          <div class="card-tags">
-            <span class="tag">Physical Intelligence</span>
-            <span class="tag">Egocentric Video</span>
-            <span class="tag">2× Improvement</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- ════════════════════════════════════════
-       2026 상반기
-  ════════════════════════════════════════ -->
-  <div class="era" style="--era-color: var(--accent-2026)">
-    <div class="era-header">
-      <div class="era-badge">
-        <span class="year">2026 H1</span>
-        <span>메모리와 폼팩터 확장</span>
-      </div>
-    </div>
-    <div class="events">
-
-      <div class="event-row left">
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">TMR-VLA</span>
-            <span class="card-date">2026.02–03</span>
-          </div>
-          <p class="card-desc">자기 구동 tri-leg soft robot 제어로 VLA의 적용 대상을 기존 매니퓰레이터 너머로 확장. 새로운 폼팩터 탐색.</p>
-          <div class="card-tags">
-            <span class="tag">Soft Robot</span>
-            <span class="tag">Tri-leg</span>
-            <span class="tag">Form Factor</span>
-          </div>
-        </div>
-        <div class="spine-dot"></div>
-        <div class="spacer"></div>
-      </div>
-
-      <div class="event-row right">
-        <div class="spacer"></div>
-        <div class="spine-dot"></div>
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">WholeBodyVLA</span>
-            <span class="card-date">2025말–2026초</span>
-          </div>
-          <p class="card-desc">휴머노이드 loco-manipulation의 통합 제어를 지향. 이동과 조작을 하나의 정책으로 통합하는 전신 제어 연구.</p>
-          <div class="card-tags">
-            <span class="tag">Humanoid</span>
-            <span class="tag">Loco-manipulation</span>
-            <span class="tag">Whole-body</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="event-row left">
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">MEM</span>
-            <span class="card-date">2026.03</span>
-          </div>
-          <p class="card-desc">장·단기 기억을 결합해 최대 15분 길이 태스크를 추적. 장기 기억 메커니즘을 VLA에 통합한 선구적 연구.</p>
-          <div class="card-tags">
-            <span class="tag">OpenDriveLab</span>
-            <span class="tag">Memory</span>
-            <span class="tag">15min Tasks</span>
-          </div>
-        </div>
-        <div class="spine-dot"></div>
-        <div class="spacer"></div>
-      </div>
-
-      <div class="event-row right">
-        <div class="spacer"></div>
-        <div class="spine-dot"></div>
-        <div class="card">
-          <div class="card-top">
-            <span class="card-title">RL Token</span>
-            <span class="card-date">2026.03</span>
-          </div>
-          <p class="card-desc">몇 시간, 경우에 따라 몇 분 수준의 실제 데이터로 정밀 조작 구간을 빠르게 온라인 RL로 향상. arXiv:2603.00420</p>
-          <div class="card-tags">
-            <span class="tag">Physical Intelligence</span>
-            <span class="tag">Online RL</span>
-            <span class="tag">Data-efficient</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-
-</div><!-- /.timeline -->
-
-<footer>
-  VLA Evolution Roadmap · Verified &amp; Calibrated Edition · 2022 – 2026.04
-</footer>
+    // Close Modal functions
+    const closeModal = () => overlay.classList.remove('active');
+    
+    closeBtn.addEventListener('click', closeModal);
+    overlay.addEventListener('click', (e) => {
+      if(e.target === overlay) closeModal(); // 바깥 어두운 배경 클릭 시 닫힘
+    });
+  </script>
 
 </body>
 </html>
