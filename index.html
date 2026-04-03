@@ -157,7 +157,16 @@ function build(){
     path.setAttribute('stroke',sc);
     path.setAttribute('stroke-width','2');
     svg.appendChild(path);
+
+    const xs1=positioned.filter(p=>p.row===ri+1).map(p=>p.x);
+    const connX=t.side==='r'?Math.max(...xs1):Math.min(...xs1);
+    const conn=document.createElementNS(ns,'line');
+    conn.setAttribute('x1',t.x); conn.setAttribute('x2',connX);
+    conn.setAttribute('y1',t.y2); conn.setAttribute('y2',t.y2);
+    conn.setAttribute('stroke',sc); conn.setAttribute('stroke-width','2');
+    svg.appendChild(conn);
   });
+  
 
   // Stems + dots
   positioned.forEach(p=>{
