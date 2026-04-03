@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>VLA 진화 로드맵 (상세보기 팝업 지원)</title>
+  <title>VLA 진화 로드맵</title>
   <style>
     :root {
       --bg: #0d0f14;
@@ -31,7 +31,6 @@
       overflow-x: hidden;
     }
 
-    /* ── Header ── */
     header {
       text-align: center;
       padding: 48px 24px 24px;
@@ -55,7 +54,6 @@
       -webkit-text-fill-color: transparent;
     }
 
-    /* ── Horizontal Scroll Area ── */
     .scroll-container {
       width: 100%;
       overflow-x: auto;
@@ -87,7 +85,6 @@
       z-index: 0;
     }
 
-    /* ── Era Divider ── */
     .era-divider { position: relative; z-index: 2; padding: 0 16px; }
     .era-badge {
       display: flex; flex-direction: column; align-items: center;
@@ -100,7 +97,6 @@
     .era-badge .year { font-size: 18px; font-weight: 900; letter-spacing: 0.5px; }
     .era-badge .desc { font-size: 11px; font-weight: 600; margin-top: 4px; }
 
-    /* ── Event Items ── */
     .event-item { position: relative; height: 100%; width: 300px; flex-shrink: 0; }
     .event-item .spine-dot {
       width: 16px; height: 16px; border-radius: 50%;
@@ -115,18 +111,15 @@
     .event-item.top::after { bottom: 50%; height: 24px; }
     .event-item.bottom::after { top: 50%; height: 24px; }
 
-    /* ── Card Styles ── */
     .card {
       position: absolute; width: 100%;
       background: var(--surface); border: 1px solid var(--border);
       border-radius: 14px; padding: 18px 20px;
-      transition: all 0.2s ease; z-index: 2;
-      cursor: pointer; /* 클릭 가능한 커서 */
+      transition: all 0.2s ease; z-index: 2; cursor: pointer;
     }
     .event-item.top .card { bottom: 50%; margin-bottom: 24px; }
     .event-item.bottom .card { top: 50%; margin-top: 24px; }
 
-    /* Hover Effect */
     .card:hover {
       border-color: var(--era-color);
       box-shadow: 0 8px 32px color-mix(in srgb, var(--era-color) 18%, transparent);
@@ -134,7 +127,6 @@
     }
     .event-item.bottom .card:hover { transform: translateY(5px) scale(1.02); }
 
-    /* Click Hint (숨겨져 있다가 hover 시 나타남) */
     .click-hint {
       display: block; font-size: 10px; color: var(--era-color);
       margin-top: 12px; font-weight: 700; opacity: 0;
@@ -159,22 +151,17 @@
       border: 1px solid color-mix(in srgb, var(--era-color) 20%, transparent);
     }
 
-    /* 팝업에 들어갈 상세 내용은 기본적으로 숨김 */
     .hidden-detail { display: none; }
 
-    /* 모바일 안내 문구 */
     .scroll-hint { text-align: center; font-size: 12px; color: var(--text-secondary); margin-bottom: 20px; animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
-    /* ── Modal (Popup) Styles ── */
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(13, 15, 20, 0.85);
-      backdrop-filter: blur(5px);
+      background: rgba(13, 15, 20, 0.85); backdrop-filter: blur(5px);
       display: flex; align-items: center; justify-content: center;
       z-index: 1000; opacity: 0; visibility: hidden;
-      transition: all 0.3s ease;
-      padding: 20px;
+      transition: all 0.3s ease; padding: 20px;
     }
     .modal-overlay.active { opacity: 1; visibility: visible; }
     
@@ -379,10 +366,9 @@
         <div class="modal-date" id="modalDate">Date</div>
       </div>
       <div class="modal-body" id="modalBody">
-        Detailed description goes here...
       </div>
       <div class="modal-tags" id="modalTags">
-        </div>
+      </div>
     </div>
   </div>
 
@@ -391,7 +377,6 @@
     const overlay = document.getElementById('modalOverlay');
     const closeBtn = document.getElementById('closeBtn');
     
-    // Modal elements
     const mTitle = document.getElementById('modalTitle');
     const mDate = document.getElementById('modalDate');
     const mBody = document.getElementById('modalBody');
@@ -400,13 +385,11 @@
 
     cards.forEach(card => {
       card.addEventListener('click', () => {
-        // Extract data from clicked card
         const title = card.querySelector('.card-title').innerText;
         const date = card.querySelector('.card-date').innerText;
         const detailHtml = card.querySelector('.hidden-detail').innerHTML;
         const themeColor = card.getAttribute('data-color');
         
-        // Extract tags
         const tags = card.querySelectorAll('.tag');
         mTags.innerHTML = '';
         tags.forEach(tag => {
@@ -419,25 +402,21 @@
           mTags.appendChild(span);
         });
 
-        // Set Modal Data
         mTitle.innerText = title;
         mDate.innerText = date;
         mBody.innerHTML = detailHtml;
         
-        // Apply dynamic color theme to modal
         mContent.style.setProperty('--modal-color', themeColor);
 
-        // Show Modal
         overlay.classList.add('active');
       });
     });
 
-    // Close Modal functions
     const closeModal = () => overlay.classList.remove('active');
     
     closeBtn.addEventListener('click', closeModal);
     overlay.addEventListener('click', (e) => {
-      if(e.target === overlay) closeModal(); // 바깥 어두운 배경 클릭 시 닫힘
+      if(e.target === overlay) closeModal();
     });
   </script>
 
