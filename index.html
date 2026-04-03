@@ -6,598 +6,228 @@
 <title>VLA 진화 로드맵</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700;800&display=swap');
-
-:root{
-  --c22:#16a34a; --c23:#d97706; --c24h1:#ea580c;
-  --c24h2:#b91c1c; --c25h1:#2563eb; --c25h2:#7c3aed; --c26:#374151;
-  --bd:#e5e7eb;
-  --t1:#111827; --t2:#6b7280; --t3:#9ca3af;
-  --cw:210px;   /* card slot width */
-  --rh:250px;   /* row height */
-  --tr:40px;    /* turn corner radius */
-  --th:80px;    /* turn section height = 2 × --tr */
-}
-
-*{box-sizing:border-box;margin:0;padding:0;}
-body{background:#fff;color:var(--t1);font-family:'Noto Sans KR',sans-serif;padding:32px 28px 80px;}
-
-/* ── Header ── */
-.hdr{text-align:center;margin-bottom:40px;}
-.hdr .eye{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--t3);margin-bottom:6px;}
-.hdr h1{font-size:22px;font-weight:800;letter-spacing:-.5px;}
-.hdr p{font-size:12px;color:var(--t2);margin-top:4px;}
-
-/* ── Snake wrapper ── */
-.snake{position:relative;max-width:1060px;margin:0 auto;}
-
-/* ═══════════════════════════════════════════════
-   ROW  –  one horizontal lane
-   ═══════════════════════════════════════════════ */
-.row{
-  position:relative;
-  display:flex;
-  align-items:center;
-  height:var(--rh);
-}
-
-/* horizontal spine */
-.row::before{
-  content:'';position:absolute;
-  top:50%;transform:translateY(-50%);
-  left:0;right:0;
-  height:2px;
-  background:var(--sc,#e5e7eb);
-  z-index:0;
-}
-
-/* ═══════════════════════════════════════════════
-   TURN  –  U-bend connector between two rows
-   Uses border-radius on two pseudo-elements:
-   one for the right cap, one for the left cap.
-   ═══════════════════════════════════════════════ */
-.turn{
-  position:relative;
-  width:100%;
-  height:var(--th);   /* = 2 × corner radius */
-}
-
-/* Right-end U-turn  (after odd rows going →) */
-.turn.r::before{
-  content:'';
-  position:absolute;
-  right:0;
-  top:0;
-  width:calc(var(--tr) * 2);   /* 80px diameter */
-  height:calc(var(--tr) * 2);  /* 80px diameter */
-  border:2px solid var(--bd);
-  border-radius:0 var(--tr) var(--tr) 0; /* right semicircle */
-  border-left:none;
-  background:transparent;
-}
-/* extend horizontal lines to the semicircle */
-.turn.r::after{
-  content:'';
-  position:absolute;
-  right:calc(var(--tr) * 2);  /* starts where semicircle begins */
-  top:0;
-  height:2px;
-  width:calc(100% - var(--tr) * 2);
-  background:var(--bd);
-}
-/* bottom line of right turn */
-.turn.r .bot{
-  position:absolute;
-  right:calc(var(--tr) * 2);
-  bottom:0;
-  height:2px;
-  width:calc(100% - var(--tr) * 2);
-  background:var(--bd);
-}
-
-/* Left-end U-turn  (after even rows going ←) */
-.turn.l::before{
-  content:'';
-  position:absolute;
-  left:0;
-  top:0;
-  width:calc(var(--tr) * 2);
-  height:calc(var(--tr) * 2);
-  border:2px solid var(--bd);
-  border-radius:var(--tr) 0 0 var(--tr);
-  border-right:none;
-  background:transparent;
-}
-.turn.l::after{
-  content:'';
-  position:absolute;
-  left:calc(var(--tr) * 2);
-  top:0;
-  height:2px;
-  width:calc(100% - var(--tr) * 2);
-  background:var(--bd);
-}
-.turn.l .bot{
-  position:absolute;
-  left:calc(var(--tr) * 2);
-  bottom:0;
-  height:2px;
-  width:calc(100% - var(--tr) * 2);
-  background:var(--bd);
-}
-
-/* ═══════════════════════════════════════════════
-   ERA BADGE
-   ═══════════════════════════════════════════════ */
-.era{
-  position:relative;z-index:3;
-  flex-shrink:0;padding:0 8px;
-}
-.era-in{
-  display:flex;flex-direction:column;align-items:center;
-  padding:5px 13px;border-radius:999px;
-  border:1.5px solid var(--ec);
-  background:#fff;color:var(--ec);
-  box-shadow:0 0 0 4px #fff;
-  white-space:nowrap;
-}
-.era-in .yr{font-size:13px;font-weight:800;line-height:1.1;}
-.era-in .sb{font-size:8.5px;font-weight:600;margin-top:1px;}
-
-/* ═══════════════════════════════════════════════
-   EVENT SLOT
-   ═══════════════════════════════════════════════ */
-.ev{
-  position:relative;
-  width:var(--cw);
-  flex-shrink:0;
-  height:100%;
-  display:flex;align-items:center;justify-content:center;
-  z-index:2;
-}
-
-/* dot on spine */
-.ev::before{
-  content:'';
-  position:absolute;
-  top:50%;left:50%;
-  transform:translate(-50%,-50%);
-  width:11px;height:11px;border-radius:50%;
-  background:var(--ec);
-  border:2.5px solid #fff;
-  box-shadow:0 0 0 2px #fff;
-  z-index:4;
-}
-
-/* stem: dot → card */
-.ev::after{
-  content:'';
-  position:absolute;
-  left:50%;transform:translateX(-50%);
-  width:1.5px;
-  background:color-mix(in srgb,var(--ec) 28%,#e5e7eb);
-  z-index:1;
-}
-.ev.up::after {bottom:50%;height:18px;}
-.ev.dn::after {top:50%;   height:18px;}
-
-/* ═══════════════════════════════════════════════
-   CARD
-   ═══════════════════════════════════════════════ */
-.card{
-  position:absolute;
-  width:calc(var(--cw) - 14px);
-  background:#fff;
-  border:1px solid var(--bd);
-  border-radius:10px;
-  padding:10px 12px 9px;
-  cursor:pointer;
-  z-index:3;
-  box-shadow:0 1px 4px rgba(0,0,0,.05);
-  transition:transform .18s,border-color .18s,box-shadow .18s;
-}
-.ev.up .card{bottom:calc(50% + 18px);}
-.ev.dn .card{top:calc(50% + 18px);}
-
-.card:hover{border-color:var(--ec);box-shadow:0 6px 20px color-mix(in srgb,var(--ec) 14%,transparent);}
-.ev.up .card:hover{transform:translateY(-3px);}
-.ev.dn .card:hover{transform:translateY( 3px);}
-
-.ctop{display:flex;align-items:flex-start;justify-content:space-between;gap:5px;margin-bottom:5px;}
-.ctitle{font-size:12px;font-weight:800;color:var(--ec);line-height:1.2;}
-.cdate{font-size:8.5px;font-weight:700;color:var(--t2);background:#f5f5f6;border:1px solid #ebebed;border-radius:999px;padding:1.5px 6px;white-space:nowrap;flex-shrink:0;}
-.cdesc{font-size:10px;color:var(--t2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
-.ctags{display:flex;flex-wrap:wrap;gap:3px;margin-top:7px;}
-.tag{font-size:8px;font-weight:700;padding:1.5px 5px;border-radius:999px;
-  background:color-mix(in srgb,var(--ec) 9%,transparent);
-  color:var(--ec);
-  border:1px solid color-mix(in srgb,var(--ec) 18%,transparent);
-  white-space:nowrap;}
-.hint{display:block;font-size:8px;color:var(--ec);margin-top:6px;font-weight:700;opacity:0;transition:opacity .18s;text-align:right;}
-.card:hover .hint{opacity:1;}
-.hd{display:none;}
-
-/* flex spacer */
-.sp{flex:1;min-width:0;}
-
-/* ═══════════════════════════════════════════════
-   MODAL
-   ═══════════════════════════════════════════════ */
-.ov{position:fixed;inset:0;background:rgba(255,255,255,.9);backdrop-filter:blur(6px);
-    display:flex;align-items:center;justify-content:center;
-    z-index:1000;opacity:0;visibility:hidden;transition:all .22s;padding:20px;}
-.ov.on{opacity:1;visibility:visible;}
-.mb{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:24px;
-    width:100%;max-width:460px;position:relative;
-    transform:translateY(14px) scale(.97);transition:all .22s;
-    box-shadow:0 16px 40px rgba(0,0,0,.09);}
-.ov.on .mb{transform:none;border-color:var(--mc,var(--bd));}
-.xbtn{position:absolute;top:13px;right:13px;background:none;border:none;
-      font-size:22px;color:var(--t2);cursor:pointer;line-height:1;transition:color .15s;}
-.xbtn:hover{color:var(--t1);}
-.mt{font-size:20px;font-weight:800;color:var(--mc,var(--t1));margin-bottom:8px;padding-right:28px;}
-.mm{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
-.md{font-size:11px;color:var(--t2);background:#f5f5f6;padding:3px 10px;border-radius:999px;}
-.ma{font-size:10px;font-weight:700;color:#b91c1c;background:#fef2f2;
-    border:1px solid #fecaca;padding:3px 9px;border-radius:999px;}
-.mbody{font-size:13px;line-height:1.7;color:var(--t1);margin-bottom:16px;}
-.mbody strong{color:var(--mc,var(--t1));}
-.mf{display:flex;flex-wrap:wrap;gap:6px;border-top:1px solid var(--bd);padding-top:14px;}
+:root { --bd:#e2e8f0; --t1:#111827; --t2:#6b7280; --t3:#9ca3af; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { background:#fff; color:var(--t1); font-family:'Noto Sans KR',sans-serif; padding:36px 48px 80px; }
+.hdr { text-align:center; margin-bottom:48px; }
+.hdr .eye { font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--t3); margin-bottom:6px; }
+.hdr h1 { font-size:23px; font-weight:800; letter-spacing:-.5px; }
+.hdr p { font-size:12px; color:var(--t2); margin-top:4px; }
+.canvas { position:relative; width:960px; margin:0 auto; }
+.canvas svg.track { position:absolute; top:0; left:0; width:960px; pointer-events:none; overflow:visible; }
+.era { position:absolute; transform:translate(-50%,-50%); z-index:10; display:flex; flex-direction:column; align-items:center; padding:5px 13px; border-radius:999px; border:1.5px solid var(--ec); background:#fff; color:var(--ec); box-shadow:0 0 0 5px #fff; white-space:nowrap; }
+.era .yr { font-size:13px; font-weight:800; line-height:1.1; }
+.era .sb { font-size:8.5px; font-weight:600; margin-top:1px; }
+.card { position:absolute; width:188px; background:#fff; border:1px solid var(--bd); border-radius:10px; padding:10px 12px 9px; cursor:pointer; box-shadow:0 1px 4px rgba(0,0,0,.05); transition:transform .18s,border-color .18s,box-shadow .18s; }
+.card:hover { border-color:var(--ec); box-shadow:0 6px 20px color-mix(in srgb,var(--ec) 14%,transparent); transform:translateY(-3px); }
+.card.below:hover { transform:translateY(3px); }
+.ctop { display:flex; align-items:flex-start; justify-content:space-between; gap:5px; margin-bottom:5px; }
+.ctitle { font-size:12px; font-weight:800; color:var(--ec); line-height:1.2; }
+.cdate { font-size:8.5px; font-weight:700; color:var(--t2); background:#f5f5f6; border:1px solid #ebebed; border-radius:999px; padding:1.5px 6px; white-space:nowrap; flex-shrink:0; }
+.cdesc { font-size:10px; color:var(--t2); line-height:1.45; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.ctags { display:flex; flex-wrap:wrap; gap:3px; margin-top:7px; }
+.tag { font-size:8px; font-weight:700; padding:1.5px 5px; border-radius:999px; white-space:nowrap; }
+.hint { display:block; font-size:8px; font-weight:700; margin-top:6px; opacity:0; transition:opacity .18s; text-align:right; }
+.card:hover .hint { opacity:1; }
+.ov { position:fixed; inset:0; background:rgba(255,255,255,.9); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center; z-index:1000; opacity:0; visibility:hidden; transition:all .22s; padding:20px; }
+.ov.on { opacity:1; visibility:visible; }
+.mb { background:#fff; border:1px solid var(--bd); border-radius:16px; padding:24px; width:100%; max-width:460px; position:relative; transform:translateY(14px) scale(.97); transition:all .22s; box-shadow:0 16px 40px rgba(0,0,0,.09); }
+.ov.on .mb { transform:none; }
+.xbtn { position:absolute; top:13px; right:13px; background:none; border:none; font-size:22px; color:var(--t2); cursor:pointer; line-height:1; }
+.xbtn:hover { color:var(--t1); }
+.mt { font-size:20px; font-weight:800; margin-bottom:8px; padding-right:28px; }
+.mm { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px; }
+.md { font-size:11px; color:var(--t2); background:#f5f5f6; padding:3px 10px; border-radius:999px; }
+.ma { font-size:10px; font-weight:700; color:#b91c1c; background:#fef2f2; border:1px solid #fecaca; padding:3px 9px; border-radius:999px; }
+.mbody { font-size:13px; line-height:1.7; color:var(--t1); margin-bottom:16px; }
+.mbody strong { color:var(--mc,#111827); }
+.mf { display:flex; flex-wrap:wrap; gap:6px; border-top:1px solid var(--bd); padding-top:14px; }
 </style>
 </head>
 <body>
-
 <div class="hdr">
   <div class="eye">Interactive Snake Timeline · 검증 완료</div>
   <h1>VLA 진화 로드맵 (2022 – 2026)</h1>
   <p>카드를 클릭하면 상세 기술 정보를 볼 수 있습니다</p>
 </div>
-
-<div class="snake">
-
-<!-- ════════════════════════════════════════════
-     ROW 1  →  2022 · 2023
-     ════════════════════════════════════════════ -->
-<div class="row" style="--sc:#d1fae5">
-
-  <div class="era" style="--ec:var(--c22)">
-    <div class="era-in"><span class="yr">2022</span><span class="sb">출발점</span></div>
-  </div>
-
-  <!-- RT-1 -->
-  <div class="ev up" style="--ec:var(--c22)">
-    <div class="card"
-      data-c="var(--c22)" data-ax="arXiv:2212.06817"
-      data-title="RT-1" data-date="2022.12"
-      data-tags="Google Research,Transformer,130k demos"
-      data-detail="<strong>범용 로봇 정책의 시작:</strong> 구글이 공개한 트랜스포머 기반 멀티태스크 로봇 제어 모델입니다.<br><br>13대 로봇, 13만 개 에피소드, 700개 이상 태스크로 학습했고 97% 성공률로 700개 훈련 지시를 수행하며 이후 VLA 연구 전체의 출발점이 됐습니다.">
-      <div class="ctop"><span class="ctitle">RT-1</span><span class="cdate">2022.12</span></div>
-      <p class="cdesc">비전·언어 입력으로 로봇 행동을 출력한 VLA의 출발점.</p>
-      <div class="ctags"><span class="tag">Google Research</span><span class="tag">Transformer</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <div class="era" style="--ec:var(--c23)">
-    <div class="era-in"><span class="yr">2023</span><span class="sb">행동 품질</span></div>
-  </div>
-
-  <!-- ACT -->
-  <div class="ev dn" style="--ec:var(--c23)">
-    <div class="card"
-      data-c="var(--c23)" data-ax="arXiv:2304.13705"
-      data-title="ACT" data-date="2023.04"
-      data-tags="Chunk Prediction,CVAE,Bimanual"
-      data-detail="<strong>Action Chunking with Transformers:</strong> 단일 행동 대신 연속 행동 묶음(chunk)을 한 번에 예측하는 방식입니다.<br><br>오류 누적 없이 매끄러운 연속 동작을 실현하며 양팔 조작 연구의 기반 구조가 됐습니다. 이후 π0·GR00T 등 대부분의 고성능 VLA가 이 chunk 예측 방식을 채택합니다.">
-      <div class="ctop"><span class="ctitle">ACT</span><span class="cdate">2023.04</span></div>
-      <p class="cdesc">chunk 예측으로 정밀 조작 오류 누적을 크게 줄인 기반 구조.</p>
-      <div class="ctags"><span class="tag">Chunk Prediction</span><span class="tag">CVAE</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <!-- Diffusion Policy -->
-  <div class="ev up" style="--ec:var(--c23)">
-    <div class="card"
-      data-c="var(--c23)" data-ax="arXiv:2303.04137"
-      data-title="Diffusion Policy" data-date="2023.05"
-      data-tags="Diffusion,Generative Policy"
-      data-detail="<strong>생성형 정책의 전환점:</strong> 이미지 생성에 쓰이던 Diffusion을 로봇 행동 생성에 적용했습니다.<br><br>멀티모달하고 부드러운 행동을 생성할 수 있게 됐으며, π0의 Flow Matching 등 이후 고성능 VLA action head가 이 방향을 계승합니다.">
-      <div class="ctop"><span class="ctitle">Diffusion Policy</span><span class="cdate">2023.05</span></div>
-      <p class="cdesc">Diffusion을 로봇 제어에 도입, 부드럽고 다양한 행동 생성.</p>
-      <div class="ctags"><span class="tag">Diffusion</span><span class="tag">Generative Policy</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <!-- RT-2 -->
-  <div class="ev dn" style="--ec:var(--c23)">
-    <div class="card"
-      data-c="var(--c23)" data-ax="arXiv:2307.15818"
-      data-title="RT-2" data-date="2023.07"
-      data-tags="Google DeepMind,VLM Transfer,PaLI-X"
-      data-detail="<strong>VLM 백본 전략의 정립:</strong> PaLI-X·PaLM-E 등 인터넷 규모 VLM을 VLA 백본으로 활용했습니다.<br><br>unseen 시나리오 성공률을 RT-1의 32%에서 62%로 높였고, 처음 보는 개념을 언어로 이해해 행동으로 연결하는 emergent generalization을 달성했습니다.">
-      <div class="ctop"><span class="ctitle">RT-2</span><span class="cdate">2023.07</span></div>
-      <p class="cdesc">웹 규모 VLM 지식으로 로봇 일반화 능력을 폭발적으로 향상.</p>
-      <div class="ctags"><span class="tag">Google DeepMind</span><span class="tag">VLM Transfer</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <div class="sp"></div>
-</div><!-- /row1 -->
-
-<!-- ════ TURN 1: 오른쪽 끝에서 아래로 꺾임 ════ -->
-<div class="turn r"><div class="bot"></div></div>
-
-<!-- ════════════════════════════════════════════
-     ROW 2  ←  2024 H2 · 2024 H1
-     (왼쪽으로 읽힘 → 오른쪽이 시작점)
-     DOM 순서도 오른쪽→왼쪽으로 배치하고
-     justify-content:flex-end 사용
-     ════════════════════════════════════════════ -->
-<div class="row" style="--sc:#ffedd5;justify-content:flex-end">
-
-  <div class="sp"></div>
-
-  <!-- π0 -->
-  <div class="ev up" style="--ec:var(--c24h2)">
-    <div class="card"
-      data-c="var(--c24h2)" data-ax="arXiv:2410.24164"
-      data-title="π0 (pi-zero)" data-date="2024.10"
-      data-tags="Physical Intelligence,Flow Matching,50Hz"
-      data-detail="<strong>실제 배포 수준 전환:</strong> Physical Intelligence의 첫 플래그십 모델로, Flow Matching 기반 action head로 50Hz 고빈도 연속 제어를 실현했습니다.<br><br>PaliGemma VLM을 백본으로 활용하며 세탁물 접기·음식 담기 등 복잡한 조작을 단일 모델로 처리합니다.">
-      <div class="ctop"><span class="ctitle">π0 (pi-zero)</span><span class="cdate">2024.10</span></div>
-      <p class="cdesc">50Hz 고빈도 연속 제어 달성, 연구→실배포 수준으로의 분기점.</p>
-      <div class="ctags"><span class="tag">Physical Intelligence</span><span class="tag">Flow Matching</span><span class="tag">50Hz</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <div class="era" style="--ec:var(--c24h2)">
-    <div class="era-in"><span class="yr">2024 H2</span><span class="sb">실전 제어</span></div>
-  </div>
-
-  <!-- OpenVLA -->
-  <div class="ev dn" style="--ec:var(--c24h1)">
-    <div class="card"
-      data-c="var(--c24h1)" data-ax="arXiv:2406.09246"
-      data-title="OpenVLA" data-date="2024.06"
-      data-tags="Stanford,7B params,LoRA"
-      data-detail="<strong>오픈 VLM 기반 VLA:</strong> Stanford·UC Berkeley·Google이 공개한 7B 파라미터 오픈소스 VLA입니다.<br><br>29개 태스크에서 RT-2-X(55B)를 16.5%p 차이로 앞질렀습니다. LoRA 경량 파인튜닝을 공식 지원해 소비자 GPU에서도 커스터마이징이 가능합니다.">
-      <div class="ctop"><span class="ctitle">OpenVLA</span><span class="cdate">2024.06</span></div>
-      <p class="cdesc">RT-2-X를 능가한 7B 오픈소스 VLA, LoRA 경량 파인튜닝 지원.</p>
-      <div class="ctags"><span class="tag">Stanford</span><span class="tag">7B params</span><span class="tag">LoRA</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <!-- Octo -->
-  <div class="ev up" style="--ec:var(--c24h1)">
-    <div class="card"
-      data-c="var(--c24h1)" data-ax="arXiv:2405.12213"
-      data-title="Octo" data-date="2024.05"
-      data-tags="UC Berkeley,Open Source,93M params"
-      data-detail="<strong>연구의 민주화:</strong> 최초의 오픈소스 범용 VLA입니다.<br><br>Diffusion action head를 트랜스포머에 결합한 93M 파라미터 구조로, Open X-Embodiment 데이터로 학습됐습니다. 누구나 다운로드·파인튜닝할 수 있어 연구 커뮤니티의 공식 기준 모델이 됐습니다.">
-      <div class="ctop"><span class="ctitle">Octo</span><span class="cdate">2024.05</span></div>
-      <p class="cdesc">최초 오픈소스 범용 VLA, 커뮤니티 기준 모델로 자리잡음.</p>
-      <div class="ctags"><span class="tag">UC Berkeley</span><span class="tag">Open Source</span><span class="tag">93M</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <div class="era" style="--ec:var(--c24h1)">
-    <div class="era-in"><span class="yr">2024 H1</span><span class="sb">오픈소스</span></div>
-  </div>
-
-</div><!-- /row2 -->
-
-<!-- ════ TURN 2: 왼쪽 끝에서 아래로 꺾임 ════ -->
-<div class="turn l"><div class="bot"></div></div>
-
-<!-- ════════════════════════════════════════════
-     ROW 3  →  2025 H1
-     ════════════════════════════════════════════ -->
-<div class="row" style="--sc:#dbeafe">
-
-  <div class="era" style="--ec:var(--c25h1)">
-    <div class="era-in"><span class="yr">2025 H1</span><span class="sb">효율·일반화</span></div>
-  </div>
-
-  <!-- FAST -->
-  <div class="ev dn" style="--ec:var(--c25h1)">
-    <div class="card"
-      data-c="var(--c25h1)" data-ax="arXiv:2501.09747"
-      data-title="FAST / π0-FAST" data-date="2025.01"
-      data-tags="Physical Intelligence,DCT,5× Training"
-      data-detail="<strong>FAST 토크나이저:</strong> Discrete Cosine Transform(DCT)으로 연속 행동 시퀀스를 주파수 영역에서 토크나이징합니다.<br><br>기존 Diffusion 기반 VLA 대비 학습(training) 속도를 약 5배 개선했습니다. 이후 NORA·π0.5 등이 이 토크나이저를 채택합니다.">
-      <div class="ctop"><span class="ctitle">FAST / π0-FAST</span><span class="cdate">2025.01</span></div>
-      <p class="cdesc">DCT 기반 주파수 토크나이징으로 VLA 학습 속도 약 5배 향상.</p>
-      <div class="ctags"><span class="tag">Physical Intelligence</span><span class="tag">DCT</span><span class="tag">5× Training</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <!-- GR00T N1 -->
-  <div class="ev up" style="--ec:var(--c25h1)">
-    <div class="card"
-      data-c="var(--c25h1)" data-ax="arXiv:2503.14734"
-      data-title="GR00T N1" data-date="2025.03"
-      data-tags="NVIDIA,Humanoid,Dual-system"
-      data-detail="<strong>듀얼 시스템 구조:</strong> System 2(느린 추론·계획)와 System 1(빠른 반사·실행)을 분리한 계층 구조를 도입했습니다.<br><br>Eagle VLM을 비전 백본으로 사용하며, 텔레옵·시뮬레이션·월드모델 데이터를 혼합 학습한 최초의 대형 오픈 휴머노이드 파운데이션 모델입니다.">
-      <div class="ctop"><span class="ctitle">GR00T N1</span><span class="cdate">2025.03</span></div>
-      <p class="cdesc">계획·실행 분리 계층 구조, 휴머노이드 전신 제어 오픈 모델.</p>
-      <div class="ctags"><span class="tag">NVIDIA</span><span class="tag">Humanoid</span><span class="tag">Dual-system</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <!-- π0.5 -->
-  <div class="ev dn" style="--ec:var(--c25h1)">
-    <div class="card"
-      data-c="var(--c25h1)" data-ax="arXiv:2504.16054"
-      data-title="π0.5" data-date="2025.04"
-      data-tags="Physical Intelligence,Open-world,Household"
-      data-detail="<strong>Open-world Generalization:</strong> 완전히 처음 보는 가정 환경에서도 장기 household task를 수행하는 일반화를 달성했습니다.<br><br>FAST+ 토크나이저를 사용하며 대규모 인터넷 비전-언어 데이터와 로봇 데이터를 함께 학습했습니다.">
-      <div class="ctop"><span class="ctitle">π0.5</span><span class="cdate">2025.04</span></div>
-      <p class="cdesc">처음 보는 가정 환경에서도 household task 수행, open-world 도약.</p>
-      <div class="ctags"><span class="tag">Physical Intelligence</span><span class="tag">Open-world</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <!-- NORA -->
-  <div class="ev up" style="--ec:var(--c25h1)">
-    <div class="card"
-      data-c="var(--c25h1)" data-ax=""
-      data-title="NORA" data-date="2025.04"
-      data-tags="Open Source,3B params,FAST+"
-      data-detail="<strong>경량 범용 VLA:</strong> FAST+ 토크나이저를 활용한 3B 파라미터 소형 오픈소스 VLA입니다.<br><br>별도의 diffusion action head 없이 단일 autoregressive 구조로 경량화를 극대화했습니다. 자원 제한 환경에서도 범용 VLA를 배포할 수 있다는 방향을 제시했습니다.">
-      <div class="ctop"><span class="ctitle">NORA</span><span class="cdate">2025.04</span></div>
-      <p class="cdesc">FAST+ 기반 3B 소형 오픈 VLA, 경량 배포 방향의 기준 제시.</p>
-      <div class="ctags"><span class="tag">Open Source</span><span class="tag">3B params</span><span class="tag">FAST+</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <div class="sp"></div>
-</div><!-- /row3 -->
-
-<!-- ════ TURN 3: 오른쪽 끝에서 아래로 꺾임 ════ -->
-<div class="turn r"><div class="bot"></div></div>
-
-<!-- ════════════════════════════════════════════
-     ROW 4  ←  2026 H1 · 2025 H2
-     왼쪽으로 흐름 → DOM은 오른쪽 시작점부터
-     날짜 순: 오른쪽 끝(진입점)이 2025 H2(11월~12월),
-     왼쪽 끝이 2026 H1(01월~03월)
-     ════════════════════════════════════════════ -->
-<div class="row" style="--sc:#e5e7eb;justify-content:flex-end">
-
-  <div class="sp"></div>
-
-  <!-- X-VLA (2026.01) - 왼쪽 끝 -->
-  <div class="ev dn" style="--ec:var(--c26)">
-    <div class="card"
-      data-c="var(--c26)" data-ax="arXiv:2510.10274"
-      data-title="X-VLA" data-date="2026.01"
-      data-tags="ICLR 2026,Cross-Embodiment,0.9B"
-      data-detail="<strong>Cross-Embodiment 확장:</strong> ICLR 2026 채택, IROS 2025 AgiBot World Challenge 우승 모델입니다.<br><br>각 데이터 소스마다 Soft Prompt 임베딩을 부여해 이기종 로봇 데이터를 단일 트랜스포머로 효과적으로 학습합니다. 0.9B 파라미터로 6개 시뮬레이션 + 3개 실세계 로봇에서 SOTA 달성.">
-      <div class="ctop"><span class="ctitle">X-VLA</span><span class="cdate">2026.01</span></div>
-      <p class="cdesc">Soft Prompt 크로스 엠보디먼트 VLA, IROS 2025 우승·ICLR 2026.</p>
-      <div class="ctags"><span class="tag">ICLR 2026</span><span class="tag">Cross-Embodiment</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <!-- TMR-VLA (2026.02) -->
-  <div class="ev up" style="--ec:var(--c26)">
-    <div class="card"
-      data-c="var(--c26)" data-ax="arXiv:2603.00420"
-      data-title="TMR-VLA" data-date="2026.02"
-      data-tags="Soft Robot,Magnetic,ICRA 2026"
-      data-detail="<strong>소프트 로봇 VLA:</strong> 자기장으로 구동되는 tri-leg 실리콘 소프트 로봇에 VLA를 최초 적용한 사례입니다.<br><br>언어 명령과 시각 피드백만으로 저수준 전압 제어를 직접 생성합니다. TrilegMR-Motion 데이터셋으로 학습해 74% 평균 성공률 달성. ICRA 2026.">
-      <div class="ctop"><span class="ctitle">TMR-VLA</span><span class="cdate">2026.02</span></div>
-      <p class="cdesc">자기 구동 tri-leg 소프트 로봇 제어, VLA 적용 범위 확장.</p>
-      <div class="ctags"><span class="tag">Soft Robot</span><span class="tag">ICRA 2026</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <!-- MEM (2026.03) -->
-  <div class="ev dn" style="--ec:var(--c26)">
-    <div class="card"
-      data-c="var(--c26)" data-ax="arXiv:2603.03596"
-      data-title="MEM" data-date="2026.03"
-      data-tags="Physical Intelligence,Memory,15min Tasks"
-      data-detail="<strong>Multi-Scale Embodied Memory:</strong> Physical Intelligence + Stanford·UCB·MIT가 공개한 VLA 메모리 시스템입니다.<br><br>단기: sparse 시공간 attention video encoder. 장기: 자연어 요약 기반 메모리. 두 가지를 결합해 주방 청소·그릴드 치즈 샌드위치 만들기 등 최대 15분 태스크를 성공적으로 수행했습니다.">
-      <div class="ctop"><span class="ctitle">MEM</span><span class="cdate">2026.03</span></div>
-      <p class="cdesc">단·장기 기억 결합으로 최대 15분 태스크를 추적하는 메모리 시스템.</p>
-      <div class="ctags"><span class="tag">Physical Intelligence</span><span class="tag">Memory</span><span class="tag">15min</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <div class="era" style="--ec:var(--c26)">
-    <div class="era-in"><span class="yr">2026 H1</span><span class="sb">메모리·확장</span></div>
-  </div>
-
-  <!-- WholeBodyVLA (2025.12) -->
-  <div class="ev up" style="--ec:var(--c25h2)">
-    <div class="card"
-      data-c="var(--c25h2)" data-ax=""
-      data-title="WholeBodyVLA" data-date="2025.12"
-      data-tags="OpenDriveLab,Humanoid,Loco-manip."
-      data-detail="<strong>전신 통합 제어:</strong> OpenDriveLab이 공개한 휴머노이드 loco-manipulation 통합 VLA로 ICLR 2026에 채택됐습니다.<br><br>Latent Action Model(LAM)로 행동 어노테이션 없이 egocentric 영상에서 잠재 행동을 학습하고, LMO RL Policy로 안정적인 전신 협응을 구현합니다.">
-      <div class="ctop"><span class="ctitle">WholeBodyVLA</span><span class="cdate">2025.12</span></div>
-      <p class="cdesc">이동+조작을 하나의 정책으로 통합한 휴머노이드 전신 제어 VLA.</p>
-      <div class="ctags"><span class="tag">OpenDriveLab</span><span class="tag">Humanoid</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <!-- π*0.6 (2025.11) - 오른쪽 끝(진입점) -->
-  <div class="ev dn" style="--ec:var(--c25h2)">
-    <div class="card"
-      data-c="var(--c25h2)" data-ax="arXiv:2511.14759"
-      data-title="π*0.6" data-date="2025.11"
-      data-tags="Physical Intelligence,RECAP,Offline RL"
-      data-detail="<strong>RECAP (Advantage-conditioned RL):</strong> Offline RL로 VLA를 사전학습(π*0.6)한 뒤, 실제 배포 중 자율 수집 데이터와 전문가 개입으로 지속 파인튜닝하는 구조입니다.<br><br>세탁물 접기·박스 조립·에스프레소 제조 등에서 throughput 2배 이상, 실패율 절반으로 감소.">
-      <div class="ctop"><span class="ctitle">π*0.6</span><span class="cdate">2025.11</span></div>
-      <p class="cdesc">RECAP 기반 RL post-training, 일부 태스크 throughput 2배 이상.</p>
-      <div class="ctags"><span class="tag">Physical Intelligence</span><span class="tag">RECAP</span></div>
-      <span class="hint">➕ 상세 정보</span>
-    </div>
-  </div>
-
-  <div class="era" style="--ec:var(--c25h2)">
-    <div class="era-in"><span class="yr">2025 H2</span><span class="sb">배포 후 학습</span></div>
-  </div>
-
-</div><!-- /row4 -->
-
-</div><!-- /snake -->
-
-<!-- ── Modal ── -->
+<div class="canvas" id="canvas"></div>
 <div class="ov" id="ov">
   <div class="mb" id="mb">
     <button class="xbtn" id="xbtn">&times;</button>
     <div class="mt" id="mt"></div>
-    <div class="mm">
-      <span class="md" id="md"></span>
-      <span class="ma" id="ma" style="display:none"></span>
-    </div>
+    <div class="mm"><span class="md" id="md"></span><span class="ma" id="ma" style="display:none"></span></div>
     <div class="mbody" id="mbody"></div>
     <div class="mf" id="mf"></div>
   </div>
 </div>
-
 <script>
-document.querySelectorAll('.card').forEach(card => {
-  card.addEventListener('click', () => {
-    const c = card.dataset.c, ax = card.dataset.ax || '';
-    document.getElementById('mt').textContent = card.dataset.title;
-    document.getElementById('mt').style.color = c;
-    document.getElementById('md').textContent = card.dataset.date;
-    const maEl = document.getElementById('ma');
-    if (ax) { maEl.textContent = ax; maEl.style.display = 'inline-block'; }
-    else     { maEl.style.display = 'none'; }
-    document.getElementById('mbody').innerHTML = card.dataset.detail;
-    const foot = document.getElementById('mf');
-    foot.innerHTML = '';
-    card.dataset.tags.split(',').forEach(t => {
-      const s = document.createElement('span');
-      s.className = 'tag'; s.textContent = t.trim();
-      s.style.cssText = `background:color-mix(in srgb,${c} 9%,transparent);color:${c};border:1px solid color-mix(in srgb,${c} 18%,transparent)`;
-      foot.appendChild(s);
+const CW=188, STEM=22, CH=130, COL=210, ROW_H=300, R=50, SY0=150, PAD=60, W=960;
+
+const NODES=[
+  {era:1,label:'2022',sub:'출발점',color:'#16a34a',row:0},
+  {title:'RT-1',date:'2022.12',color:'#16a34a',row:0,side:'up',short:'비전·언어 입력으로 로봇 행동을 출력한 VLA의 출발점.',arxiv:'arXiv:2212.06817',tags:['Google Research','Transformer'],detail:'<strong>범용 로봇 정책의 시작:</strong> 구글이 공개한 트랜스포머 기반 멀티태스크 로봇 제어 모델입니다.<br><br>13대 로봇, 13만 개 에피소드, 700개 이상 태스크로 학습했고 97% 성공률로 700개 훈련 지시를 수행하며 이후 VLA 연구 전체의 출발점이 됐습니다.'},
+  {era:1,label:'2023',sub:'행동 품질',color:'#d97706',row:0},
+  {title:'ACT',date:'2023.04',color:'#d97706',row:0,side:'down',short:'chunk 예측으로 정밀 조작 오류 누적을 크게 줄인 기반 구조.',arxiv:'arXiv:2304.13705',tags:['Chunk Prediction','CVAE'],detail:'<strong>Action Chunking with Transformers:</strong> 단일 행동 대신 연속 행동 묶음(chunk)을 한 번에 예측하는 방식입니다.<br><br>이후 π0·GR00T 등 대부분의 고성능 VLA가 이 방식을 채택합니다.'},
+  {title:'Diffusion Policy',date:'2023.05',color:'#d97706',row:0,side:'up',short:'Diffusion을 로봇 제어에 도입, 부드럽고 다양한 행동 생성.',arxiv:'arXiv:2303.04137',tags:['Diffusion','Generative Policy'],detail:'<strong>생성형 정책의 전환점:</strong> 이미지 생성에 쓰이던 Diffusion을 로봇 행동 생성에 적용했습니다.<br><br>π0의 Flow Matching 등 이후 고성능 VLA action head가 이 방향을 계승합니다.'},
+  {title:'RT-2',date:'2023.07',color:'#d97706',row:0,side:'down',short:'웹 규모 VLM 지식으로 로봇 일반화 능력을 폭발적으로 향상.',arxiv:'arXiv:2307.15818',tags:['Google DeepMind','VLM Transfer'],detail:'<strong>VLM 백본 전략의 정립:</strong> PaLI-X·PaLM-E 등 인터넷 규모 VLM을 VLA 백본으로 활용했습니다.<br><br>unseen 시나리오 성공률을 RT-1의 32%에서 62%로 높였고, emergent generalization을 달성했습니다.'},
+
+  {era:1,label:'2024 H1',sub:'오픈소스',color:'#ea580c',row:1},
+  {title:'Octo',date:'2024.05',color:'#ea580c',row:1,side:'up',short:'최초 오픈소스 범용 VLA, 커뮤니티 기준 모델로 자리잡음.',arxiv:'arXiv:2405.12213',tags:['UC Berkeley','Open Source','93M'],detail:'<strong>연구의 민주화:</strong> 최초의 오픈소스 범용 VLA입니다.<br><br>93M 파라미터 구조로 Open X-Embodiment 데이터로 학습됐습니다. 누구나 다운로드·파인튜닝할 수 있어 연구 커뮤니티의 공식 기준 모델이 됐습니다.'},
+  {title:'OpenVLA',date:'2024.06',color:'#ea580c',row:1,side:'down',short:'RT-2-X를 능가한 7B 오픈소스 VLA, LoRA 경량 파인튜닝 지원.',arxiv:'arXiv:2406.09246',tags:['Stanford','7B params','LoRA'],detail:'<strong>오픈 VLM 기반 VLA:</strong> Stanford·UC Berkeley·Google이 공개한 7B 파라미터 오픈소스 VLA입니다.<br><br>29개 태스크에서 RT-2-X(55B)를 16.5%p 차이로 앞질렀습니다.'},
+  {era:1,label:'2024 H2',sub:'실전 제어',color:'#b91c1c',row:1},
+  {title:'π0 (pi-zero)',date:'2024.10',color:'#b91c1c',row:1,side:'up',short:'50Hz 고빈도 연속 제어 달성, 연구→실배포 수준으로의 분기점.',arxiv:'arXiv:2410.24164',tags:['Physical Intelligence','Flow Matching','50Hz'],detail:'<strong>실제 배포 수준 전환:</strong> Physical Intelligence의 첫 플래그십 모델로, Flow Matching 기반 action head로 50Hz 고빈도 연속 제어를 실현했습니다.<br><br>PaliGemma VLM을 백본으로 활용하며 세탁물 접기 등 복잡한 조작을 단일 모델로 처리합니다.'},
+
+  {era:1,label:'2025 H1',sub:'효율·일반화',color:'#2563eb',row:2},
+  {title:'FAST / π0-FAST',date:'2025.01',color:'#2563eb',row:2,side:'down',short:'DCT 기반 주파수 토크나이징으로 VLA 학습 속도 약 5배 향상.',arxiv:'arXiv:2501.09747',tags:['Physical Intelligence','DCT','5× Training'],detail:'<strong>FAST 토크나이저:</strong> Discrete Cosine Transform(DCT)으로 연속 행동 시퀀스를 주파수 영역에서 토크나이징합니다.<br><br>기존 Diffusion 기반 VLA 대비 학습(training) 속도를 약 5배 개선했습니다.'},
+  {title:'GR00T N1',date:'2025.03',color:'#2563eb',row:2,side:'up',short:'계획·실행 분리 계층 구조, 휴머노이드 전신 제어 오픈 모델.',arxiv:'arXiv:2503.14734',tags:['NVIDIA','Humanoid','Dual-system'],detail:'<strong>듀얼 시스템 구조:</strong> System 2(느린 추론·계획)와 System 1(빠른 반사·실행)을 분리한 계층 구조를 도입했습니다.<br><br>Eagle VLM을 비전 백본으로 사용하며 텔레옵·시뮬레이션·월드모델 데이터를 혼합 학습한 최초의 대형 오픈 휴머노이드 파운데이션 모델입니다.'},
+  {title:'π0.5',date:'2025.04',color:'#2563eb',row:2,side:'down',short:'처음 보는 가정 환경에서도 household task 수행, open-world 도약.',arxiv:'arXiv:2504.16054',tags:['Physical Intelligence','Open-world'],detail:'<strong>Open-world Generalization:</strong> 완전히 처음 보는 가정 환경에서도 장기 household task를 수행하는 일반화를 달성했습니다.<br><br>FAST+ 토크나이저를 사용하며 대규모 인터넷 비전-언어 데이터와 로봇 데이터를 함께 학습했습니다.'},
+  {title:'NORA',date:'2025.04',color:'#2563eb',row:2,side:'up',short:'FAST+ 기반 3B 소형 오픈 VLA, 경량 배포 방향의 기준 제시.',arxiv:'',tags:['Open Source','3B params','FAST+'],detail:'<strong>경량 범용 VLA:</strong> FAST+ 토크나이저를 활용한 3B 파라미터 소형 오픈소스 VLA입니다.<br><br>단일 autoregressive 구조로 경량화를 극대화했습니다.'},
+
+  {era:1,label:'2025 H2',sub:'배포 후 학습',color:'#7c3aed',row:3},
+  {title:'π*0.6',date:'2025.11',color:'#7c3aed',row:3,side:'down',short:'RECAP 기반 RL post-training, 일부 태스크 throughput 2배 이상.',arxiv:'arXiv:2511.14759',tags:['Physical Intelligence','RECAP'],detail:'<strong>RECAP (Advantage-conditioned RL):</strong> Offline RL로 VLA를 사전학습한 뒤, 실제 배포 중 자율 수집 데이터와 전문가 개입으로 지속 파인튜닝하는 구조입니다.<br><br>세탁물 접기·박스 조립·에스프레소 제조 등에서 throughput 2배 이상, 실패율 절반으로 감소.'},
+  {title:'WholeBodyVLA',date:'2025.12',color:'#7c3aed',row:3,side:'up',short:'이동+조작을 하나의 정책으로 통합한 휴머노이드 전신 제어 VLA.',arxiv:'',tags:['OpenDriveLab','Humanoid'],detail:'<strong>전신 통합 제어:</strong> OpenDriveLab이 공개한 휴머노이드 loco-manipulation 통합 VLA로 ICLR 2026에 채택됐습니다.<br><br>Latent Action Model(LAM)로 행동 어노테이션 없이 egocentric 영상에서 잠재 행동을 학습합니다.'},
+  {era:1,label:'2026 H1',sub:'메모리·확장',color:'#374151',row:3},
+  {title:'X-VLA',date:'2026.01',color:'#374151',row:3,side:'down',short:'Soft Prompt 크로스 엠보디먼트 VLA, IROS 2025 우승·ICLR 2026.',arxiv:'arXiv:2510.10274',tags:['ICLR 2026','Cross-Embodiment'],detail:'<strong>Cross-Embodiment 확장:</strong> ICLR 2026 채택, IROS 2025 AgiBot World Challenge 우승 모델입니다.<br><br>각 데이터 소스마다 Soft Prompt 임베딩을 부여해 이기종 로봇 데이터를 단일 트랜스포머로 효과적으로 학습합니다.'},
+  {title:'TMR-VLA',date:'2026.02',color:'#374151',row:3,side:'up',short:'자기 구동 tri-leg 소프트 로봇 제어, VLA 적용 범위 확장.',arxiv:'arXiv:2603.00420',tags:['Soft Robot','ICRA 2026'],detail:'<strong>소프트 로봇 VLA:</strong> 자기장으로 구동되는 tri-leg 실리콘 소프트 로봇에 VLA를 최초 적용한 사례입니다.<br><br>TrilegMR-Motion 데이터셋으로 학습해 74% 평균 성공률 달성.'},
+  {title:'MEM',date:'2026.03',color:'#374151',row:3,side:'down',short:'단·장기 기억 결합으로 최대 15분 태스크를 추적하는 메모리 시스템.',arxiv:'arXiv:2603.03596',tags:['Physical Intelligence','Memory','15min'],detail:'<strong>Multi-Scale Embodied Memory:</strong> Physical Intelligence + Stanford·UCB·MIT가 공개한 VLA 메모리 시스템입니다.<br><br>단기: sparse 시공간 attention video encoder. 장기: 자연어 요약 기반 메모리. 두 가지를 결합해 주방 청소 등 최대 15분 태스크를 성공적으로 수행했습니다.'},
+];
+
+function build(){
+  // assign x per row
+  const rows=[[],[],[],[]];
+  NODES.forEach(n=>rows[n.row].push(n));
+  const SY=[SY0, SY0+ROW_H, SY0+ROW_H*2, SY0+ROW_H*3];
+  const positioned=[];
+  rows.forEach((row,ri)=>{
+    const ltr=(ri%2===0);
+    let x=ltr?PAD:W-PAD;
+    row.forEach(n=>{
+      const p={...n,x,sy:SY[ri]};
+      if(!n.era){
+        const up=n.side==='up';
+        p.cardX=x-CW/2;
+        p.cardY=up?SY[ri]-STEM-CH:SY[ri]+STEM;
+        p.above=up;
+      }
+      positioned.push(p);
+      x+=ltr?COL:-COL;
     });
-    document.getElementById('mb').style.setProperty('--mc', c);
-    document.getElementById('ov').classList.add('on');
   });
-});
-const close = () => document.getElementById('ov').classList.remove('on');
-document.getElementById('xbtn').addEventListener('click', close);
-document.getElementById('ov').addEventListener('click', e => { if (e.target === document.getElementById('ov')) close(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+
+  const canvasH=SY[3]+SY0;
+  const canvas=document.getElementById('canvas');
+  canvas.style.height=canvasH+'px';
+
+  // SVG
+  const ns='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(ns,'svg');
+  svg.classList.add('track');
+  svg.setAttribute('height',canvasH);
+  svg.setAttribute('viewBox',`0 0 ${W} ${canvasH}`);
+
+  const sc='#cbd5e1';
+
+  // Spines
+  rows.forEach((row,ri)=>{
+    const xs=positioned.filter(p=>p.row===ri).map(p=>p.x);
+    const x1=Math.min(...xs), x2=Math.max(...xs);
+    const line=document.createElementNS(ns,'line');
+    line.setAttribute('x1',x1);line.setAttribute('x2',x2);
+    line.setAttribute('y1',SY[ri]);line.setAttribute('y2',SY[ri]);
+    line.setAttribute('stroke',sc);line.setAttribute('stroke-width','2');
+    svg.appendChild(line);
+  });
+
+  // Turns: right after row0, left after row1, right after row2
+  // Right turn: arc from (rightX, SY[i]) to (rightX, SY[i+1]) curving RIGHT
+  // Left turn:  arc from (leftX,  SY[i]) to (leftX,  SY[i+1]) curving LEFT
+  const turns=[
+    {side:'r',x:W-PAD,y1:SY[0],y2:SY[1]},
+    {side:'l',x:PAD,  y1:SY[1],y2:SY[2]},
+    {side:'r',x:W-PAD,y1:SY[2],y2:SY[3]},
+  ];
+  turns.forEach(t=>{
+    // SVG arc: A rx ry x-rot large-arc sweep ex ey
+    // rx = R (corner radius), ry = half vertical distance
+    const ry=(t.y2-t.y1)/2;
+    const sweep=t.side==='r'?1:0;
+    const path=document.createElementNS(ns,'path');
+    path.setAttribute('d',`M ${t.x} ${t.y1} A ${R} ${ry} 0 0 ${sweep} ${t.x} ${t.y2}`);
+    path.setAttribute('fill','none');
+    path.setAttribute('stroke',sc);
+    path.setAttribute('stroke-width','2');
+    svg.appendChild(path);
+  });
+
+  // Stems + dots
+  positioned.forEach(p=>{
+    if(p.era) return;
+    const up=p.above;
+    const y1=up?p.sy-STEM:p.sy;
+    const y2=up?p.sy:p.sy+STEM;
+    const stem=document.createElementNS(ns,'line');
+    stem.setAttribute('x1',p.x);stem.setAttribute('x2',p.x);
+    stem.setAttribute('y1',y1);stem.setAttribute('y2',y2);
+    stem.setAttribute('stroke',p.color+'66');stem.setAttribute('stroke-width','1.5');
+    svg.appendChild(stem);
+
+    const dot=document.createElementNS(ns,'circle');
+    dot.setAttribute('cx',p.x);dot.setAttribute('cy',p.sy);
+    dot.setAttribute('r','5.5');dot.setAttribute('fill',p.color);
+    dot.setAttribute('stroke','#fff');dot.setAttribute('stroke-width','2.5');
+    svg.appendChild(dot);
+  });
+
+  canvas.appendChild(svg);
+
+  // Era badges
+  positioned.forEach(p=>{
+    if(!p.era) return;
+    const el=document.createElement('div');
+    el.className='era';
+    el.style.cssText=`left:${p.x}px;top:${p.sy}px;--ec:${p.color}`;
+    el.innerHTML=`<span class="yr">${p.label}</span><span class="sb">${p.sub}</span>`;
+    canvas.appendChild(el);
+  });
+
+  // Cards
+  positioned.forEach(p=>{
+    if(!p.title) return;
+    const el=document.createElement('div');
+    el.className='card'+(p.above?'':' below');
+    el.style.cssText=`left:${p.cardX}px;top:${p.cardY}px;--ec:${p.color}`;
+    const tags=p.tags.map(t=>`<span class="tag" style="background:color-mix(in srgb,${p.color} 9%,transparent);color:${p.color};border:1px solid color-mix(in srgb,${p.color} 18%,transparent)">${t}</span>`).join('');
+    el.innerHTML=`<div class="ctop"><span class="ctitle">${p.title}</span><span class="cdate">${p.date}</span></div><p class="cdesc">${p.short}</p><div class="ctags">${tags}</div><span class="hint" style="color:${p.color}">➕ 상세 정보</span>`;
+    el.dataset.title=p.title;el.dataset.date=p.date;el.dataset.color=p.color;
+    el.dataset.arxiv=p.arxiv||'';el.dataset.detail=p.detail;el.dataset.tags=p.tags.join(',');
+    el.addEventListener('click',openModal);
+    canvas.appendChild(el);
+  });
+}
+
+function openModal(e){
+  const el=e.currentTarget,c=el.dataset.color;
+  document.getElementById('mt').textContent=el.dataset.title;
+  document.getElementById('mt').style.color=c;
+  document.getElementById('md').textContent=el.dataset.date;
+  const ma=document.getElementById('ma');
+  if(el.dataset.arxiv){ma.textContent=el.dataset.arxiv;ma.style.display='inline-block';}
+  else ma.style.display='none';
+  document.getElementById('mbody').innerHTML=el.dataset.detail;
+  document.getElementById('mbody').style.setProperty('--mc',c);
+  const mf=document.getElementById('mf');mf.innerHTML='';
+  el.dataset.tags.split(',').forEach(t=>{
+    const s=document.createElement('span');s.className='tag';s.textContent=t;
+    s.style.cssText=`background:color-mix(in srgb,${c} 9%,transparent);color:${c};border:1px solid color-mix(in srgb,${c} 18%,transparent)`;
+    mf.appendChild(s);
+  });
+  document.getElementById('ov').classList.add('on');
+}
+const close=()=>document.getElementById('ov').classList.remove('on');
+document.getElementById('xbtn').addEventListener('click',close);
+document.getElementById('ov').addEventListener('click',e=>{if(e.target===document.getElementById('ov'))close();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+build();
 </script>
 </body>
 </html>
