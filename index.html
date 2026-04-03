@@ -146,7 +146,7 @@ function build(){
     {side:'l', x:Math.min(...positioned.filter(p=>p.row===1).map(p=>p.x)), y1:SY[1],y2:SY[2]},
     {side:'r', x:Math.max(...positioned.filter(p=>p.row===2).map(p=>p.x)), y1:SY[2],y2:SY[3]},
   ];
-  turns.forEach(t=>{
+  turns.forEach((t, ri)=>{
     // SVG arc: A rx ry x-rot large-arc sweep ex ey
     // rx = R (corner radius), ry = half vertical distance
     const ry=(t.y2-t.y1)/2;
