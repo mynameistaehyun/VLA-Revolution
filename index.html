@@ -142,9 +142,9 @@ function build(){
   // Right turn: arc from (rightX, SY[i]) to (rightX, SY[i+1]) curving RIGHT
   // Left turn:  arc from (leftX,  SY[i]) to (leftX,  SY[i+1]) curving LEFT
   const turns=[
-    {side:'r',x:W-PAD,y1:SY[0],y2:SY[1]},
-    {side:'l',x:PAD,  y1:SY[1],y2:SY[2]},
-    {side:'r',x:W-PAD,y1:SY[2],y2:SY[3]},
+    {side:'r', x:Math.max(...positioned.filter(p=>p.row===0).map(p=>p.x)), y1:SY[0],y2:SY[1]},
+    {side:'l', x:Math.min(...positioned.filter(p=>p.row===1).map(p=>p.x)), y1:SY[1],y2:SY[2]},
+    {side:'r', x:Math.max(...positioned.filter(p=>p.row===2).map(p=>p.x)), y1:SY[2],y2:SY[3]},
   ];
   turns.forEach(t=>{
     // SVG arc: A rx ry x-rot large-arc sweep ex ey
