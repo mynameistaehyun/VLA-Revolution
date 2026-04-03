@@ -6,17 +6,17 @@
   <title>VLA 진화 로드맵</title>
   <style>
     :root {
-      --bg: #0d0f14;
-      --surface: #161a24;
-      --border: #2a2f3f;
-      --text-primary: #e8ecf4;
-      --text-secondary: #8a93aa;
-      --accent-2022: #4caf7d;
-      --accent-2023: #f0c040;
-      --accent-2024: #f07840;
-      --accent-2025a: #4ea8de;
-      --accent-2025b: #a07de8;
-      --accent-2026: #c0c8d8;
+      --bg: #ffffff;
+      --surface: #ffffff;
+      --border: #e6e6e9;
+      --text-primary: #37352f;
+      --text-secondary: #787774;
+      --accent-2022: #2ea570;
+      --accent-2023: #d99e0b;
+      --accent-2024: #d96c2b;
+      --accent-2025a: #2e8bba;
+      --accent-2025b: #855bce;
+      --accent-2026: #737c8c;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,46 +33,44 @@
 
     header {
       text-align: center;
-      padding: 48px 24px 24px;
+      padding: 30px 20px 10px;
     }
     header .label {
       display: inline-block;
-      font-size: 11px;
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: 3px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       color: var(--text-secondary);
-      margin-bottom: 12px;
+      margin-bottom: 6px;
     }
     header h1 {
-      font-size: clamp(24px, 4vw, 36px);
+      font-size: 22px;
       font-weight: 800;
       letter-spacing: -0.5px;
       line-height: 1.2;
-      background: linear-gradient(135deg, #e8ecf4 30%, #8a93aa);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: var(--text-primary);
     }
 
     .scroll-container {
       width: 100%;
       overflow-x: auto;
-      padding: 20px 40px 60px;
+      padding: 10px 20px 30px;
       scroll-behavior: smooth;
     }
-    .scroll-container::-webkit-scrollbar { height: 8px; }
-    .scroll-container::-webkit-scrollbar-track { background: color-mix(in srgb, var(--surface) 50%, transparent); border-radius: 10px; }
-    .scroll-container::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+    .scroll-container::-webkit-scrollbar { height: 6px; }
+    .scroll-container::-webkit-scrollbar-track { background: var(--surface); border-radius: 10px; }
+    .scroll-container::-webkit-scrollbar-thumb { background: #d3d3d3; border-radius: 10px; }
     .scroll-container::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
 
     .timeline-track {
       display: flex;
       align-items: center;
-      height: 460px;
+      height: 320px;
       position: relative;
       width: max-content;
-      gap: 20px;
-      padding-right: 60px;
+      gap: 16px;
+      padding-right: 40px;
     }
 
     .timeline-track::before {
@@ -85,80 +83,81 @@
       z-index: 0;
     }
 
-    .era-divider { position: relative; z-index: 2; padding: 0 16px; }
+    .era-divider { position: relative; z-index: 2; padding: 0 10px; }
     .era-badge {
       display: flex; flex-direction: column; align-items: center;
-      padding: 10px 24px; border-radius: 12px;
-      border: 1.5px solid var(--era-color);
-      background: color-mix(in srgb, var(--bg) 95%, var(--era-color));
+      padding: 6px 14px; border-radius: 8px;
+      border: 1px solid var(--era-color);
+      background: color-mix(in srgb, var(--bg) 92%, var(--era-color));
       color: var(--era-color);
-      box-shadow: 0 0 20px color-mix(in srgb, var(--era-color) 15%, transparent);
+      box-shadow: 0 0 10px color-mix(in srgb, var(--era-color) 10%, transparent);
     }
-    .era-badge .year { font-size: 18px; font-weight: 900; letter-spacing: 0.5px; }
-    .era-badge .desc { font-size: 11px; font-weight: 600; margin-top: 4px; }
+    .era-badge .year { font-size: 14px; font-weight: 800; letter-spacing: 0.5px; }
+    .era-badge .desc { font-size: 10px; font-weight: 600; margin-top: 2px; }
 
-    .event-item { position: relative; height: 100%; width: 300px; flex-shrink: 0; }
+    .event-item { position: relative; height: 100%; width: 240px; flex-shrink: 0; }
     .event-item .spine-dot {
-      width: 16px; height: 16px; border-radius: 50%;
-      background: var(--era-color); border: 4px solid var(--bg);
-      box-shadow: 0 0 12px color-mix(in srgb, var(--era-color) 60%, transparent);
+      width: 12px; height: 12px; border-radius: 50%;
+      background: var(--era-color); border: 3px solid var(--bg);
+      box-shadow: 0 0 8px color-mix(in srgb, var(--era-color) 40%, transparent);
       position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 3;
     }
     .event-item::after {
       content: ''; position: absolute; left: 50%; width: 2px;
       background: var(--border); transform: translateX(-50%); z-index: 1;
     }
-    .event-item.top::after { bottom: 50%; height: 24px; }
-    .event-item.bottom::after { top: 50%; height: 24px; }
+    .event-item.top::after { bottom: 50%; height: 16px; }
+    .event-item.bottom::after { top: 50%; height: 16px; }
 
     .card {
       position: absolute; width: 100%;
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 14px; padding: 18px 20px;
+      border-radius: 10px; padding: 14px 16px;
       transition: all 0.2s ease; z-index: 2; cursor: pointer;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
-    .event-item.top .card { bottom: 50%; margin-bottom: 24px; }
-    .event-item.bottom .card { top: 50%; margin-top: 24px; }
+    .event-item.top .card { bottom: 50%; margin-bottom: 16px; }
+    .event-item.bottom .card { top: 50%; margin-top: 16px; }
 
     .card:hover {
       border-color: var(--era-color);
-      box-shadow: 0 8px 32px color-mix(in srgb, var(--era-color) 18%, transparent);
-      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 6px 16px color-mix(in srgb, var(--era-color) 15%, transparent);
+      transform: translateY(-3px);
     }
-    .event-item.bottom .card:hover { transform: translateY(5px) scale(1.02); }
+    .event-item.bottom .card:hover { transform: translateY(3px); }
 
     .click-hint {
-      display: block; font-size: 10px; color: var(--era-color);
-      margin-top: 12px; font-weight: 700; opacity: 0;
+      display: block; font-size: 9px; color: var(--era-color);
+      margin-top: 8px; font-weight: 700; opacity: 0;
       transition: opacity 0.2s; text-align: right;
     }
     .card:hover .click-hint { opacity: 1; }
 
-    .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .card-title { font-size: 16px; font-weight: 800; color: var(--era-color); }
+    .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .card-title { font-size: 14px; font-weight: 800; color: var(--era-color); }
     .card-date {
-      font-size: 11px; font-weight: 600; color: var(--text-secondary);
-      background: color-mix(in srgb, var(--era-color) 10%, var(--bg));
-      border: 1px solid color-mix(in srgb, var(--era-color) 25%, transparent);
-      border-radius: 999px; padding: 3px 10px;
+      font-size: 10px; font-weight: 600; color: var(--text-secondary);
+      background: rgba(0,0,0,0.03);
+      border: 1px solid rgba(0,0,0,0.05);
+      border-radius: 999px; padding: 2px 8px;
     }
-    .card-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-    .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+    .card-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 10px; }
     .tag {
-      font-size: 10.5px; font-weight: 600; padding: 3px 8px; border-radius: 4px;
-      background: color-mix(in srgb, var(--era-color) 12%, transparent);
-      color: color-mix(in srgb, var(--era-color) 90%, #fff);
+      font-size: 9.5px; font-weight: 600; padding: 2px 6px; border-radius: 4px;
+      background: color-mix(in srgb, var(--era-color) 10%, transparent);
+      color: var(--era-color);
       border: 1px solid color-mix(in srgb, var(--era-color) 20%, transparent);
     }
 
     .hidden-detail { display: none; }
 
-    .scroll-hint { text-align: center; font-size: 12px; color: var(--text-secondary); margin-bottom: 20px; animation: pulse 2s infinite; }
+    .scroll-hint { text-align: center; font-size: 11px; color: var(--text-secondary); margin-bottom: 16px; animation: pulse 2s infinite; }
     @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
 
     .modal-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: rgba(13, 15, 20, 0.85); backdrop-filter: blur(5px);
+      background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(4px);
       display: flex; align-items: center; justify-content: center;
       z-index: 1000; opacity: 0; visibility: hidden;
       transition: all 0.3s ease; padding: 20px;
@@ -167,27 +166,27 @@
     
     .modal-content {
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 16px; padding: 30px; width: 100%; max-width: 500px;
+      border-radius: 12px; padding: 24px; width: 100%; max-width: 450px;
       transform: translateY(20px) scale(0.95); transition: all 0.3s ease;
-      position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      position: relative; box-shadow: 0 10px 30px rgba(0,0,0,0.08);
     }
-    .modal-overlay.active .modal-content { transform: translateY(0) scale(1); border-color: var(--modal-color, var(--border)); }
+    .modal-overlay.active .modal-content { transform: translateY(0) scale(1); border-color: var(--era-color, var(--border)); }
     
     .close-btn {
-      position: absolute; top: 20px; right: 20px;
+      position: absolute; top: 16px; right: 16px;
       background: transparent; border: none; color: var(--text-secondary);
-      font-size: 24px; cursor: pointer; transition: color 0.2s;
+      font-size: 22px; cursor: pointer; transition: color 0.2s;
     }
-    .close-btn:hover { color: #fff; }
+    .close-btn:hover { color: var(--text-primary); }
 
-    .modal-header { margin-bottom: 20px; padding-right: 30px; }
-    .modal-title { font-size: 22px; font-weight: 800; color: var(--modal-color, #fff); margin-bottom: 8px; }
-    .modal-date { display: inline-block; font-size: 12px; color: var(--text-secondary); padding: 4px 12px; border-radius: 999px; background: rgba(255,255,255,0.05); }
+    .modal-header { margin-bottom: 16px; padding-right: 24px; }
+    .modal-title { font-size: 18px; font-weight: 800; color: var(--era-color, var(--text-primary)); margin-bottom: 6px; }
+    .modal-date { display: inline-block; font-size: 11px; color: var(--text-secondary); padding: 3px 10px; border-radius: 999px; background: rgba(0,0,0,0.04); }
     
-    .modal-body { font-size: 14px; line-height: 1.7; color: var(--text-primary); margin-bottom: 20px; }
-    .modal-body strong { color: var(--modal-color, #fff); }
+    .modal-body { font-size: 13px; line-height: 1.6; color: var(--text-primary); margin-bottom: 16px; }
+    .modal-body strong { color: var(--era-color, var(--text-primary)); }
     
-    .modal-tags { display: flex; flex-wrap: wrap; gap: 8px; border-top: 1px solid var(--border); padding-top: 20px; }
+    .modal-tags { display: flex; flex-wrap: wrap; gap: 6px; border-top: 1px solid var(--border); padding-top: 16px; }
   </style>
 </head>
 <body>
@@ -215,7 +214,7 @@
           </div>
           <p class="card-desc">트랜스포머 기반 멀티태스크 로봇 제어의 가능성을 증명한 VLA의 시초.</p>
           <div class="hidden-detail">
-            <strong>핵심 성과:</strong> 13대의 로봇으로 13만 개의 궤적을 학습했습니다.<br><br>기존 로봇 제어 모델들이 한 가지 임무에만 특화되어 있던 것과 달리, "대규모 데이터와 트랜스포머 아키텍처를 결합하면 로봇에게도 범용적인 정책(Generalist Policy)을 만들 수 있다"는 가능성을 실세계에서 처음으로 증명한 기념비적인 연구입니다.
+            <strong>핵심 성과:</strong> 13대의 로봇으로 13만 개의 궤적을 학습했습니다.<br><br>기존 로봇 제어 모델들이 한 가지 임무에만 특화되어 있던 것과 달리, 대규모 데이터와 트랜스포머 아키텍처를 결합하면 로봇에게도 범용적인 정책을 만들 수 있다는 가능성을 실세계에서 처음으로 증명한 기념비적인 연구입니다.
           </div>
           <div class="card-tags">
             <span class="tag">Google Research</span><span class="tag">Transformer</span>
@@ -234,7 +233,7 @@
           <div class="card-top"><span class="card-title">ACT</span><span class="card-date">2023.04</span></div>
           <p class="card-desc">행동을 chunk 단위로 예측해 정밀 조작 성능을 끌어올림.</p>
           <div class="hidden-detail">
-            <strong>Action Chunking 도입:</strong> 로봇이 한 번에 하나의 동작만 예측하면 오류가 누적되어 덜덜 떨리는 현상(Compounding error)이 발생합니다. <br><br>ACT는 일정 단위의 행동을 '덩어리(Chunk)'로 묶어 한 번에 예측하고 부드럽게 겹쳐서 실행(Temporal Ensembling)하는 방식을 도입했습니다. 이를 통해 양팔 로봇의 매우 정밀하고 매끄러운 연속 동작이 가능해졌습니다.
+            <strong>Action Chunking 도입:</strong> 로봇이 한 번에 하나의 동작만 예측하면 오류가 누적되어 덜덜 떨리는 현상이 발생합니다. <br><br>ACT는 일정 단위의 행동을 덩어리로 묶어 한 번에 예측하고 부드럽게 겹쳐서 실행하는 방식을 도입했습니다. 이를 통해 양팔 로봇의 매우 정밀하고 매끄러운 연속 동작이 가능해졌습니다.
           </div>
           <div class="card-tags"><span class="tag">Chunk Prediction</span><span class="tag">Imitation Learning</span></div>
           <span class="click-hint">➕ 상세 정보 보기</span>
@@ -245,9 +244,9 @@
         <div class="spine-dot"></div>
         <div class="card" data-color="var(--accent-2023)">
           <div class="card-top"><span class="card-title">Diffusion Policy</span><span class="card-date">2023.05</span></div>
-          <p class="card-desc">확산(Diffusion) 모델을 로봇 제어에 도입하여 다채로운 행동을 생성.</p>
+          <p class="card-desc">확산 모델을 로봇 제어에 도입하여 다채로운 행동을 생성.</p>
           <div class="hidden-detail">
-            <strong>생성형 AI의 로봇 적용:</strong> 이미지 생성 AI(Midjourney 등)에서 쓰이는 노이즈 제거(Denoising) 과정을 로봇의 궤적 생성에 적용했습니다.<br><br>단순히 정해진 하나의 동작만 하는 것이 아니라, 같은 목표라도 여러 가지 방법으로 부드럽게 접근할 수 있는 '행동의 다양성'을 크게 개선하여 이후 거의 모든 고성능 VLA의 표준 행동 생성 알고리즘이 되었습니다.
+            <strong>생성형 AI의 로봇 적용:</strong> 이미지 생성 AI에서 쓰이는 노이즈 제거 과정을 로봇의 궤적 생성에 적용했습니다.<br><br>단순히 정해진 하나의 동작만 하는 것이 아니라, 같은 목표라도 여러 가지 방법으로 부드럽게 접근할 수 있는 행동의 다양성을 크게 개선하여 이후 거의 모든 고성능 VLA의 표준 행동 생성 알고리즘이 되었습니다.
           </div>
           <div class="card-tags"><span class="tag">Diffusion Model</span><span class="tag">Generative Policy</span></div>
           <span class="click-hint">➕ 상세 정보 보기</span>
@@ -260,7 +259,7 @@
           <div class="card-top"><span class="card-title">RT-2</span><span class="card-date">2023.07</span></div>
           <p class="card-desc">웹 스케일 VLM 지식을 로봇 제어에 연결하여 폭발적인 일반화 달성.</p>
           <div class="hidden-detail">
-            <strong>로봇 데이터의 한계 돌파:</strong> "로봇 데이터만으로는 한계가 있으니 세상의 지식을 끌어오자"는 전략의 첫 구현체입니다.<br><br>인터넷의 방대한 사진과 텍스트로 사전 학습된 시각-언어 모델(VLM)을 로봇 두뇌의 뼈대로 사용했습니다. 그 결과, 로봇이 한 번도 본 적 없는 물건(예: 다스베이더 피규어)을 언어로 이해하고 조작할 수 있는 엄청난 범용성(Semantic Generalization)을 보여주었습니다.
+            <strong>로봇 데이터의 한계 돌파:</strong> 로봇 데이터만으로는 한계가 있으니 세상의 지식을 끌어오자는 전략의 첫 구현체입니다.<br><br>인터넷의 방대한 사진과 텍스트로 사전 학습된 시각-언어 모델을 로봇 두뇌의 뼈대로 사용했습니다. 그 결과, 로봇이 한 번도 본 적 없는 물건을 언어로 이해하고 조작할 수 있는 엄청난 범용성을 보여주었습니다.
           </div>
           <div class="card-tags"><span class="tag">Google DeepMind</span><span class="tag">VLM Transfer</span></div>
           <span class="click-hint">➕ 상세 정보 보기</span>
@@ -277,7 +276,7 @@
           <div class="card-top"><span class="card-title">Octo</span><span class="card-date">2024.05</span></div>
           <p class="card-desc">최초급 오픈소스 범용 VLA. 연구 커뮤니티의 기준 모델로 자리매김.</p>
           <div class="hidden-detail">
-            <strong>연구의 민주화:</strong> 이전까지의 강력한 로봇 AI는 구글 같은 빅테크 기업의 전유물이었습니다.<br><br>Octo는 대규모 오픈 데이터셋(Open X-Embodiment)으로 사전 학습된 트랜스포머 기반 모델로, 누구나 모델 가중치를 다운로드받아 자신의 연구실 로봇에 맞게 파인튜닝할 수 있게 만들어 로봇 AI 연구의 폭발적 성장을 견인했습니다.
+            <strong>연구의 민주화:</strong> 이전까지의 강력한 로봇 AI는 구글 같은 빅테크 기업의 전유물이었습니다.<br><br>Octo는 대규모 오픈 데이터셋으로 사전 학습된 트랜스포머 기반 모델로, 누구나 모델 가중치를 다운로드받아 자신의 연구실 로봇에 맞게 파인튜닝할 수 있게 만들어 로봇 AI 연구의 폭발적 성장을 견인했습니다.
           </div>
           <div class="card-tags"><span class="tag">Open Source</span><span class="tag">UC Berkeley</span></div>
           <span class="click-hint">➕ 상세 정보 보기</span>
@@ -290,7 +289,7 @@
           <div class="card-top"><span class="card-title">OpenVLA</span><span class="card-date">2024.07</span></div>
           <p class="card-desc">최초의 VLM 기반 오픈소스. RT-2 성능을 능가하고 경량 튜닝 지원.</p>
           <div class="hidden-detail">
-            <strong>7B 파라미터의 기적:</strong> Llama 2 기반의 시각-언어 모델(Prismatic VLM)을 백본으로 사용한 오픈소스 모델입니다.<br><br>구글의 거대한 RT-2보다 크기는 작지만, 여러 조작 태스크 평가에서 이를 뛰어넘는 효율을 보여주었습니다. 특히 적은 컴퓨팅 자원으로도 학습이 가능한 LoRA(저랭크 적응) 파인튜닝을 공식 지원해 기업과 대학에서 널리 쓰이고 있습니다.
+            <strong>7B 파라미터의 기적:</strong> Llama 2 기반의 시각-언어 모델을 백본으로 사용한 오픈소스 모델입니다.<br><br>구글의 거대한 RT-2보다 크기는 작지만, 여러 조작 태스크 평가에서 이를 뛰어넘는 효율을 보여주었습니다. 특히 적은 컴퓨팅 자원으로도 학습이 가능한 파인튜닝을 공식 지원해 기업과 대학에서 널리 쓰이고 있습니다.
           </div>
           <div class="card-tags"><span class="tag">Stanford / Berkeley</span><span class="tag">LoRA Supported</span></div>
           <span class="click-hint">➕ 상세 정보 보기</span>
@@ -303,7 +302,7 @@
           <div class="card-top"><span class="card-title">π0 (pi-zero)</span><span class="card-date">2024.10</span></div>
           <p class="card-desc">Flow matching 도입으로 50Hz 고주파 제어 및 실제 배포 수준 도달.</p>
           <div class="hidden-detail">
-            <strong>로봇계의 ChatGPT 모멘트:</strong> Physical Intelligence사에서 발표한 이 모델은 확산(Diffusion)보다 수렴 속도가 빠르고 안정적인 Flow-matching을 Action Head에 도입했습니다.<br><br>초당 50번의 미세한 움직임을 제어하여 세탁물 접기, 계란 깨기 등 이전에는 불가능했던 극도로 복잡하고 섬세한 조작을 단 하나의 범용 모델로 처리해 냈습니다.
+            <strong>로봇계의 ChatGPT 모멘트:</strong> 확산 모델보다 수렴 속도가 빠르고 안정적인 Flow-matching을 도입했습니다.<br><br>초당 50번의 미세한 움직임을 제어하여 세탁물 접기, 계란 깨기 등 이전에는 불가능했던 극도로 복잡하고 섬세한 조작을 단 하나의 범용 모델로 처리해 냈습니다.
           </div>
           <div class="card-tags"><span class="tag">Physical Intelligence</span><span class="tag">Flow-matching</span></div>
           <span class="click-hint">➕ 상세 정보 보기</span>
@@ -320,7 +319,7 @@
           <div class="card-top"><span class="card-title">π0-FAST</span><span class="card-date">2025.01</span></div>
           <p class="card-desc">주파수 영역 토크나이징을 통해 추론 속도를 15배 향상.</p>
           <div class="hidden-detail">
-            <strong>토크나이징의 혁신:</strong> VLA 모델의 가장 큰 단점은 덩치가 커서 뇌(추론)가 느리게 작동한다는 점이었습니다.<br><br>FAST는 연속적인 로봇 행동 데이터를 주파수(Frequency) 영역으로 변환한 뒤 압축하는 방식을 사용하여 기존 모델과 동일한 성능을 내면서도 추론 속도를 무려 15배나 높여 실시간 고속 제어의 장벽을 허물었습니다.
+            <strong>토크나이징의 혁신:</strong> VLA 모델의 가장 큰 단점은 덩치가 커서 추론이 느리게 작동한다는 점이었습니다.<br><br>FAST는 연속적인 로봇 행동 데이터를 주파수 영역으로 변환한 뒤 압축하는 방식을 사용하여 기존 모델과 동일한 성능을 내면서도 추론 속도를 무려 15배나 높여 실시간 고속 제어의 장벽을 허물었습니다.
           </div>
           <div class="card-tags"><span class="tag">Frequency Tokenizing</span><span class="tag">15x Speed</span></div>
           <span class="click-hint">➕ 상세 정보 보기</span>
@@ -346,7 +345,7 @@
           <div class="card-top"><span class="card-title">π0.5 (pi-0.5)</span><span class="card-date">2025.04</span></div>
           <p class="card-desc">처음 보는 집이나 환경에서도 즉각적으로 임무를 수행하는 오픈월드 일반화.</p>
           <div class="hidden-detail">
-            <strong>공간을 초월한 일반화:</strong> 기존 로봇들은 통제된 실험실 환경에서는 잘 작동하지만 환경이 바뀌면 바보가 되곤 했습니다.<br><br>π0.5는 방대한 공간 데이터 학습을 통해 '오픈월드 일반화(Open-world Generalization)'를 달성했습니다. 처음 가보는 가정집 주방에서도 사람이 말하는 대로 물건을 찾고 조리 도구를 다룰 수 있는 수준으로 진화했습니다.
+            <strong>공간을 초월한 일반화:</strong> 기존 로봇들은 통제된 실험실 환경에서는 잘 작동하지만 환경이 바뀌면 통제하기 어려웠습니다.<br><br>π0.5는 방대한 공간 데이터 학습을 통해 오픈월드 일반화를 달성했습니다. 처음 가보는 가정집 주방에서도 사람이 말하는 대로 물건을 찾고 조리 도구를 다룰 수 있는 수준으로 진화했습니다.
           </div>
           <div class="card-tags"><span class="tag">Physical Intelligence</span><span class="tag">Open-world</span></div>
           <span class="click-hint">➕ 상세 정보 보기</span>
@@ -396,9 +395,9 @@
           const span = document.createElement('span');
           span.className = 'tag';
           span.innerText = tag.innerText;
-          span.style.background = `color-mix(in srgb, ${themeColor} 20%, transparent)`;
-          span.style.color = `color-mix(in srgb, ${themeColor} 90%, #fff)`;
-          span.style.border = `1px solid color-mix(in srgb, ${themeColor} 40%, transparent)`;
+          span.style.background = `color-mix(in srgb, ${themeColor} 10%, transparent)`;
+          span.style.color = themeColor;
+          span.style.border = `1px solid color-mix(in srgb, ${themeColor} 20%, transparent)`;
           mTags.appendChild(span);
         });
 
@@ -406,7 +405,7 @@
         mDate.innerText = date;
         mBody.innerHTML = detailHtml;
         
-        mContent.style.setProperty('--modal-color', themeColor);
+        mContent.style.setProperty('--era-color', themeColor);
 
         overlay.classList.add('active');
       });
